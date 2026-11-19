@@ -1,0 +1,6 @@
+{
+  "name": "Consola CCO · Tesalia CBC",
+  "description": "Centro de Control y Operaciones de Seguridad Física - Tesalia CBC Ecuador. Monitoreo integral de novedades, cámaras CCTV, supervisión, blindados, decomisos y validaciones.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Permitir lectura y escritura en colecciones operativas del Centro de Control
+    match /incidents/{incidentId} {
+      allow read, write: if true;
+    }
+    match /operationalFeed/{feedId} {
+      allow read, write: if true;
+    }
+    match /uploadHistory/{uploadId} {
+      allow read, write: if true;
+    }
+  }
+}

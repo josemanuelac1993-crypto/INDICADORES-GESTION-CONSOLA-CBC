@@ -1,0 +1,60 @@
+{
+  "entities": {
+    "Incident": {
+      "title": "Incident",
+      "description": "Registro de novedad o evento operativo de seguridad física en una sede",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Identificador único de la novedad" },
+        "a": { "type": "string", "description": "Nombre canónico de la sede o instalación" },
+        "t": { "type": "number", "description": "Índice numérico de la categoría de incidente (0 a 20)" },
+        "e": { "type": "number", "description": "Estado de la novedad: 0 En proceso, 1 Cerrada, 2 Comunicado" },
+        "d": { "type": "string", "description": "Fecha del incidente en formato YYYY-MM-DD" },
+        "x": { "type": "string", "description": "Descripción detallada de los hechos u observaciones" },
+        "author": { "type": "string", "description": "Operador, coordinador o fuente del reporte" },
+        "source": { "type": "string", "description": "Origen del dato: manual, excel o sheets" },
+        "createdAt": { "type": "string", "description": "Marca de tiempo ISO de creación o sincronización" }
+      },
+      "required": ["id", "a", "t", "e", "d"]
+    },
+    "OperationalFeed": {
+      "title": "OperationalFeed",
+      "description": "Estado consolidado de indicadores del CCO (cámaras, supervisión, blindados, decomisos)",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Identificador del documento (generalmente 'latest')" },
+        "updatedAt": { "type": "string", "description": "Marca de tiempo ISO de la última actualización" },
+        "data": { "type": "string", "description": "Carga útil serializada JSON de FeedState" }
+      },
+      "required": ["id", "updatedAt", "data"]
+    },
+    "UploadHistory": {
+      "title": "UploadHistory",
+      "description": "Registro histórico de archivos Excel y sincronizaciones aplicadas",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Identificador único del registro de carga" },
+        "timestamp": { "type": "string", "description": "Fecha y hora legible de la carga" },
+        "filesCount": { "type": "number", "description": "Cantidad de archivos procesados" },
+        "fileNames": { "type": "string", "description": "Nombres de los archivos procesados serializados" },
+        "indicatorsUpdated": { "type": "string", "description": "Indicadores afectados serializados" },
+        "summary": { "type": "string", "description": "Resumen textual del resultado" }
+      },
+      "required": ["id", "timestamp", "summary"]
+    }
+  },
+  "firestore": {
+    "/incidents/{incidentId}": {
+      "schema": "Incident",
+      "description": "Colección de novedades e incidencias de la bitácora operativa"
+    },
+    "/operationalFeed/{feedId}": {
+      "schema": "OperationalFeed",
+      "description": "Documentos de estado consolidado de indicadores CCO"
+    },
+    "/uploadHistory/{uploadId}": {
+      "schema": "UploadHistory",
+      "description": "Historial de cargas y sincronizaciones del CCO"
+    }
+  }
+}
