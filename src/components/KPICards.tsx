@@ -38,7 +38,7 @@ export const KPICards: React.FC<KPICardsProps> = ({ data, activeControl, onSelec
       id: 'nov',
       title: 'Novedades Nacionales',
       value: formatNumber(data.totalNovedades),
-      subtitle: 'Acumulado 2026 · 21 sedes operativas',
+      subtitle: 'Ene–Nov 2026 · 21 sedes operativas',
       meta: 'Bitácora + Turnos',
       metaColor: 'text-blue-800',
       icon: AlertCircle,

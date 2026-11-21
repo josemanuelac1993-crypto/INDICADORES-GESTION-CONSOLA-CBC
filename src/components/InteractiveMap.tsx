@@ -117,11 +117,14 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
           <div className="lg:col-span-8 relative aspect-[660/680] max-h-[580px] min-h-[500px] w-full mx-auto rounded-xl overflow-hidden border border-slate-300 shadow-xs bg-slate-100">
             <APIProvider
               apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ''}
+              language="es"
+              region="EC"
             >
               <Map
                 defaultCenter={{ lat: -1.831239, lng: -78.183406 }}
                 defaultZoom={7}
                 mapId="DEMO_MAP_ID"
+                internalUsageAttributionIds={['gmp_mcp_codeassist_v1_aistudio']}
                 style={{ width: '100%', height: '100%' }}
                 gestureHandling="greedy"
                 disableDefaultUI={false}

@@ -213,7 +213,7 @@ export const OperationalControls: React.FC<OperationalControlsProps> = ({
             <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3">
               Promedio de Cámaras Fuera de Servicio por Turno (Histórico 2026)
             </h4>
-            <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
+            <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-11 gap-2">
               {monthlyTrends.cam.map(m => (
                 <div key={m.m} className="p-2.5 rounded-lg bg-slate-50 border border-slate-300 text-center">
                   <span className="text-[11px] font-extrabold text-slate-700 block">{m.m}</span>
@@ -325,7 +325,7 @@ export const OperationalControls: React.FC<OperationalControlsProps> = ({
               <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3">
                 Porcentaje de Supervisión Mensual
               </h4>
-              <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
+              <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-11 gap-2">
                 {monthlyTrends.sp.map(m => (
                   <div key={m.m} className="p-2.5 rounded-lg bg-slate-50 border border-slate-300 text-center">
                     <span className="text-[11px] font-extrabold text-slate-700 block">{m.m}</span>
@@ -427,7 +427,7 @@ export const OperationalControls: React.FC<OperationalControlsProps> = ({
               <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3">
                 Frecuencia de Ingreso Mensual
               </h4>
-              <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
+              <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-11 gap-2">
                 {monthlyTrends.bl.map(m => (
                   <div key={m.m} className="p-2.5 rounded-lg bg-slate-50 border border-slate-300 text-center">
                     <span className="text-[11px] font-extrabold text-slate-700 block">{m.m}</span>
@@ -516,7 +516,7 @@ export const OperationalControls: React.FC<OperationalControlsProps> = ({
               <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3">
                 Evolución Mensual de Decomisos (Unidades)
               </h4>
-              <div className="grid grid-cols-5 sm:grid-cols-10 gap-2">
+              <div className="grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-11 gap-2">
                 {monthlyTrends.dc.map(m => {
                   const heightPct = Math.max(10, (m.t / dcStats.maxMonthVal) * 100);
                   return (
@@ -680,7 +680,7 @@ export const OperationalControls: React.FC<OperationalControlsProps> = ({
                 {formatNumber(curValObj.tot)}
               </div>
               <p className="text-xs text-slate-600 font-medium mt-0.5">
-                Corte: {validations.asof || `${curValYear}-10-17`}
+                Corte: {validations.asof || `${curValYear}-11-16`}
               </p>
             </div>
             <div className="p-4 rounded-xl bg-slate-50 border border-slate-300">

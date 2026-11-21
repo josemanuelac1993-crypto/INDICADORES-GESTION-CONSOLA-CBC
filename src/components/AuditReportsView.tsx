@@ -102,7 +102,7 @@ export const AuditReportsView: React.FC<AuditReportsViewProps> = ({
                   {report.d || <span className="text-slate-500 italic">No especificada</span>}
                 </td>
                 <td className="py-2.5 px-4 text-slate-700">
-                  {report.at ? report.at.slice(0, 10) : '2026-10-17'}
+                  {report.at ? report.at.slice(0, 10) : '2026-11-16'}
                 </td>
                 <td className="py-2.5 px-4 text-right font-sans">
                   <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-800">

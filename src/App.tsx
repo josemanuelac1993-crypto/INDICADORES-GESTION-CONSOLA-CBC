@@ -64,11 +64,47 @@ import {
   FileSpreadsheet
 } from 'lucide-react';
 
-const STORAGE_FEED_KEY = 'cco_tesalia_feed_v2';
-const STORAGE_INCIDENTS_KEY = 'cco_tesalia_incidents_v2';
-const STORAGE_UPLOADS_KEY = 'cco_tesalia_uploads_v2';
+const STORAGE_FEED_KEY = 'cco_tesalia_feed_v3';
+const STORAGE_INCIDENTS_KEY = 'cco_tesalia_incidents_v3';
+const STORAGE_UPLOADS_KEY = 'cco_tesalia_uploads_v3';
 
 const MON_ORDER = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
+
+function mergeFeedByTimestamp(prev: FeedState, incoming: FeedState): FeedState {
+  const merged: FeedState = { ...prev };
+  const isNewer = (nextAt?: string, prevAt?: string) =>
+    Boolean(nextAt && (!prevAt || nextAt > prevAt));
+
+  if (incoming.nov) {
+    const nextNov = { ...(prev.nov || {}) };
+    Object.entries(incoming.nov).forEach(([k, val]) => {
+      if (isNewer(val?.at, nextNov[k]?.at)) {
+        nextNov[k] = val;
+      }
+    });
+    merged.nov = nextNov;
+  }
+
+  if (incoming.rev) {
+    const nextRev = { ...(prev.rev || {}) };
+    Object.entries(incoming.rev).forEach(([id, val]) => {
+      if (isNewer(val?.at, nextRev[id]?.at)) {
+        nextRev[id] = val;
+      }
+    });
+    merged.rev = nextRev;
+  }
+
+  if (incoming.bl && isNewer(incoming.bl.at, prev.bl?.at)) merged.bl = incoming.bl;
+  if (incoming.sp && isNewer(incoming.sp.at, prev.sp?.at)) merged.sp = incoming.sp;
+  if (incoming.dc && isNewer(incoming.dc.at, prev.dc?.at)) merged.dc = incoming.dc;
+  if (incoming.bq && isNewer(incoming.bq.at, prev.bq?.at)) merged.bq = incoming.bq;
+  if (incoming.cam && isNewer(incoming.cam.at, prev.cam?.at)) merged.cam = incoming.cam;
+  if (incoming.camm && isNewer(incoming.camm.at, prev.camm?.at)) merged.camm = incoming.camm;
+  if (incoming.vl && isNewer(incoming.vl.at, prev.vl?.at)) merged.vl = incoming.vl;
+
+  return merged;
+}
 
 export default function App() {
   // Navigation active tab
@@ -95,6 +131,7 @@ export default function App() {
   const [weatherData, setWeatherData] = useState<Record<string, WeatherData>>({});
   const [weatherLive, setWeatherLive] = useState<boolean>(false);
   const [isRefreshingWeather, setIsRefreshingWeather] = useState<boolean>(false);
+  const [gmpQuotaExceeded, setGmpQuotaExceeded] = useState<boolean>(false);
 
   // Dynamic Feed State (persisted in localStorage, seeded with INITIAL_FEED)
   const [feedState, setFeedState] = useState<FeedState>(() => {
@@ -162,10 +199,10 @@ export default function App() {
       }
     });
 
-    // Real-time synchronization of feed from Firestore
+    // Real-time synchronization of feed from Firestore (timestamp-aware so older snapshots do not overwrite newer baseline)
     const unsubFeed = subscribeToFeed(firestoreFeed => {
       setFeedState(prev => {
-        const merged = { ...prev, ...firestoreFeed };
+        const merged = mergeFeedByTimestamp(prev, firestoreFeed);
         try {
           localStorage.setItem(STORAGE_FEED_KEY, JSON.stringify(merged));
         } catch {}
@@ -173,10 +210,14 @@ export default function App() {
       });
     });
 
+    const handleQuotaExceeded = () => setGmpQuotaExceeded(true);
+    window.addEventListener('gmp-quota-exceeded', handleQuotaExceeded);
+
     return () => {
       clearInterval(interval);
       unsubIncidents();
       unsubFeed();
+      window.removeEventListener('gmp-quota-exceeded', handleQuotaExceeded);
     };
   }, []);
 
@@ -525,6 +566,7 @@ export default function App() {
     };
 
     const nextHistory = [newRecord, ...uploadHistory].slice(0, 20);
+    setFeedState(nextFeed);
     setUploadHistory(nextHistory);
 
     // Persist to Firestore
@@ -611,18 +653,25 @@ export default function App() {
   const reconciliationData = useMemo(() => {
     const totalCams = Object.values(camerasData.sites).reduce((s, [op, no]) => s + op + no, 0);
     const curValYear = validationsData.cur || '2026';
-    const curValTot = validationsData.y[curValYear]?.tot || 0;
+    const curValObj = validationsData.y[curValYear];
+    const curValTot = curValObj?.tot || 0;
+    const sumValMonths = curValObj?.m?.reduce((s, v) => s + v, 0) || 0;
+    const sumDcMonths = monthlyTrendsData.dc.reduce((s, m) => s + m.t, 0);
+    const sumIncidentStatuses = allAgencies.reduce(
+      (s, a) => s + (a.s[0] || 0) + (a.s[1] || 0) + (a.s[2] || 0),
+      0
+    );
     return {
       camerasMatch: totalCams === camerasData.op + camerasData.no,
-      decomisosMatch: true,
-      validationsMatch: true,
-      incidentsMatch: true,
+      decomisosMatch: kpiData.decomisosTotal === sumDcMonths,
+      validationsMatch: curValTot === sumValMonths,
+      incidentsMatch: kpiData.totalNovedades === sumIncidentStatuses,
       totalCameras: totalCams,
       totalDecomisos: kpiData.decomisosTotal,
       totalValidations: curValTot,
       totalIncidents: kpiData.totalNovedades
     };
-  }, [camerasData, validationsData, kpiData]);
+  }, [camerasData, validationsData, monthlyTrendsData, allAgencies, kpiData]);
 
   // Filtered agencies based on search and filters
   const filteredAgencies = useMemo(() => {
@@ -671,6 +720,22 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-white text-slate-900 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
+      {gmpQuotaExceeded && (
+        <div className="bg-amber-50 border-b border-amber-200 text-amber-900 px-4 py-2.5 text-xs md:text-sm text-center sticky top-0 z-50 shadow-sm">
+          <span>
+            Google Maps Platform quota reached. If you are the app owner, visit{' '}
+            <a
+              href="https://developers.google.com/maps/ai/ai-studio?utm_campaign=gmp_mcp_codeassist_v1_aistudio#quota_exceeded_errors"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline font-semibold text-amber-950 hover:text-amber-800"
+            >
+              maps developer site
+            </a>{' '}
+            for instructions to update your account.
+          </span>
+        </div>
+      )}
       {/* Top Header */}
       <Header
         searchQuery={searchQuery}

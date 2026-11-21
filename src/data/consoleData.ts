@@ -13,7 +13,7 @@ import {
 } from '../types/console';
 
 export const NOV_CUT = '2026-10-11';
-export const BASECAM = '2026-10-14N';
+export const BASECAM = '2026-11-16D';
 
 export const COORDINATORS: Record<RegionName, string> = {
   'GYE-SALINAS-MILAGRO': 'Byron Carrera',
@@ -162,31 +162,31 @@ export const RAW_REGIONS_DATA: Record<RegionName, AgencyData[]> = {
 };
 
 export const CAMERAS_INITIAL: CameraOverview = {
-  op: 615,
-  no: 1,
-  d: '17/10',
+  op: 617,
+  no: 2,
+  d: '16/11',
   sites: {
-    'Planta Tesalia GYE': [171, 1],
-    'Agencia Norte GYE': [41, 0],
-    'Agencia Sur GYE': [29, 0],
-    'Edificio WorQ': [17, 0],
-    'Planta Milagro': [18, 0],
-    'Agencia Salinas': [17, 0],
-    'Agencia Manta': [20, 0],
-    'Agencia Atacames': [20, 0],
-    'Agencia Quevedo': [23, 0],
-    'Agencia Santo Domingo': [14, 0],
-    'Planta y Agencia Machala': [24, 0],
-    'Agencia Cuenca': [18, 0],
-    'Agencia Loja': [21, 0],
     'Agencia Ambato': [20, 0],
+    'Agencia Atacames': [20, 0],
+    'Agencia Cuenca': [18, 0],
+    'Agencia Ibarra': [15, 0],
     'Agencia Latacunga': [11, 0],
+    'Agencia Loja': [21, 0],
+    'Agencia Manta': [19, 1],
+    'Agencia Norte GYE': [40, 1],
     'Agencia Puyo': [12, 0],
-    'Planta Machachi': [60, 0],
+    'Agencia Quevedo': [23, 0],
     'Agencia Quito Norte': [26, 0],
     'Agencia Quito Sur': [24, 0],
+    'Agencia Salinas': [17, 0],
+    'Agencia Santo Domingo': [14, 0],
+    'Agencia Sur GYE': [29, 0],
     'Bodega MEMX Quito': [14, 0],
-    'Agencia Ibarra': [15, 0]
+    'Edificio WorQ': [17, 0],
+    'Planta Machachi': [62, 0],
+    'Planta Milagro': [18, 0],
+    'Planta Tesalia GYE': [173, 0],
+    'Planta y Agencia Machala': [24, 0]
   }
 };
 
@@ -194,17 +194,17 @@ export const MONTHLY_TRENDS: MonthlyTrendsData = {
   dc: [
     { m: 'ENE', t: 449 }, { m: 'FEB', t: 592 }, { m: 'MAR', t: 310 }, { m: 'ABR', t: 58 },
     { m: 'MAY', t: 296 }, { m: 'JUN', t: 182 }, { m: 'JUL', t: 367 }, { m: 'AGO', t: 559 },
-    { m: 'SEP', t: 234 }, { m: 'OCT', t: 121 }
+    { m: 'SEP', t: 234 }, { m: 'OCT', t: 184 }, { m: 'NOV', t: 119 }
   ],
   bl: [
     { m: 'ENE', pct: 53.0 }, { m: 'FEB', pct: 53.9 }, { m: 'MAR', pct: 55.7 }, { m: 'ABR', pct: 53.9 },
     { m: 'MAY', pct: 47.3 }, { m: 'JUN', pct: 55.7 }, { m: 'JUL', pct: 54.2 }, { m: 'AGO', pct: 51.6 },
-    { m: 'SEP', pct: 54.2 }, { m: 'OCT', pct: 54.4 }
+    { m: 'SEP', pct: 54.2 }, { m: 'OCT', pct: 53.8 }, { m: 'NOV', pct: 52.3 }
   ],
   sp: [
     { m: 'ENE', pct: 44.1 }, { m: 'FEB', pct: 42.3 }, { m: 'MAR', pct: 42.9 }, { m: 'ABR', pct: 42.3 },
     { m: 'MAY', pct: 34.2 }, { m: 'JUN', pct: 31.5 }, { m: 'JUL', pct: 41.9 }, { m: 'AGO', pct: 42.4 },
-    { m: 'SEP', pct: 43.0 }, { m: 'OCT', pct: 38.8 }
+    { m: 'SEP', pct: 43.0 }, { m: 'OCT', pct: 39.1 }, { m: 'NOV', pct: 39.7 }
   ],
   cam: [
     { m: 'ENE', no: 3.03, pct: 99.49, n: 62, cams: 600 },
@@ -216,13 +216,14 @@ export const MONTHLY_TRENDS: MonthlyTrendsData = {
     { m: 'JUL', no: 1.41, pct: 99.77, n: 61, cams: 607 },
     { m: 'AGO', no: 1.61, pct: 99.73, n: 62, cams: 609 },
     { m: 'SEP', no: 1.33, pct: 99.78, n: 60, cams: 612 },
-    { m: 'OCT', no: 4.36, pct: 99.29, n: 33, cams: 618 }
+    { m: 'OCT', no: 3.40, pct: 99.45, n: 50, cams: 618 },
+    { m: 'NOV', no: 6.39, pct: 98.97, n: 31, cams: 619 }
   ]
 };
 
 export const BLOCKED_PERSONNEL: BlockedPersonnel = {
-  bloq: 171,
-  desb: 29,
+  bloq: 176,
+  desb: 28,
   mot: [
     ['DESVINCULACION', 22],
     ['INCUMPLIMIENTO DE NORMAS', 17],
@@ -231,34 +232,34 @@ export const BLOCKED_PERSONNEL: BlockedPersonnel = {
     ['BLOQUEO NIVEL NACIONAL', 7]
   ],
   emp: [
-    ['MACCARGO', 61],
+    ['MACCARGO', 63],
     ['TRANSRRECARGO', 42],
     ['EXACTOCARGA', 19],
-    ['VENPARGLOBAL', 8],
+    ['VENPARGLOBAL', 9],
     ['TERCERO', 4]
   ],
   yr: [
     [2024, 2],
     [2025, 86],
-    [2026, 83]
+    [2026, 88]
   ]
 };
 
 export const VALIDATIONS: ValidationSummary = {
   cur: '2026',
   prev: '2025',
-  p25: 6822,
-  asof: '2026-10-17',
+  p25: 7373,
+  asof: '2026-11-16',
   y: {
     '2025': {
-      tot: 8403,
+      tot: 8402,
       nd: 0,
-      m: [751, 810, 662, 713, 775, 788, 756, 739, 507, 567, 836, 499],
-      tipo: [1876, 1896, 612, 86, 193, 3740],
+      m: [751, 810, 661, 713, 775, 788, 756, 739, 507, 567, 836, 499],
+      tipo: [1876, 1896, 612, 86, 193, 3739],
       ag: {
         'Planta Tesalia GYE': 2407,
         'Planta Milagro': 562,
-        'Agencia Manta': 525,
+        'Agencia Manta': 524,
         'Agencia Norte GYE': 457,
         'Agencia Sur GYE': 395,
         'Agencia Santo Domingo': 308,
@@ -275,30 +276,30 @@ export const VALIDATIONS: ValidationSummary = {
       al: 75
     },
     '2026': {
-      tot: 8262,
+      tot: 9091,
       nd: 0,
-      m: [809, 857, 1137, 981, 711, 782, 990, 627, 776, 592, 0, 0],
-      tipo: [3614, 3341, 485, 188, 181, 453],
+      m: [810, 857, 1137, 981, 711, 782, 990, 626, 775, 1064, 358, 0],
+      tipo: [3940, 3723, 513, 197, 237, 481],
       ag: {
-        'Planta Tesalia GYE': 3972,
-        'Agencia Norte GYE': 1039,
-        'Agencia Sur GYE': 860,
-        'Planta Milagro': 787,
-        'Agencia Manta': 490,
-        'Agencia Quevedo': 197,
-        'Agencia Atacames': 166,
-        'Agencia Santo Domingo': 140,
-        'Agencia Salinas': 130,
-        'Planta Machachi': 66,
+        'Planta Tesalia GYE': 4446,
+        'Agencia Norte GYE': 1154,
+        'Agencia Sur GYE': 944,
+        'Planta Milagro': 860,
+        'Agencia Manta': 531,
+        'Agencia Quevedo': 198,
+        'Agencia Atacames': 185,
+        'Agencia Santo Domingo': 145,
+        'Agencia Salinas': 137,
+        'Planta Machachi': 67,
         'Planta y Agencia Machala': 18,
         'Agencia Ambato': 4,
         'Agencia Loja': 2,
         'Agencia Cuenca': 1,
         'Agencia Quito Norte': 1
       },
-      multi: { 'GYE-SALINAS-MILAGRO': 117, 'UIO-IBARRA': 51 },
-      none: 221,
-      al: 102
+      multi: { 'GYE-SALINAS-MILAGRO': 123, 'UIO-IBARRA': 51 },
+      none: 224,
+      al: 108
     }
   }
 };
@@ -407,6 +408,7 @@ export const AUDIT_REPORTS_DATA = [
   { id: "r9y3c0t", a: "Agencia Norte GYE", at: "2026-10-17T22:57:48.117Z", d: "2026-04-02" },
   { id: "rabpdw", a: "Agencia Santo Domingo", at: "2026-10-17T22:56:32.637Z", d: "2026-08-19" },
   { id: "ralr7yj", a: "Planta Machachi", at: "2026-10-17T22:54:36.852Z", d: "2026-10-04" },
+  { id: "rbl0mxp", a: "Planta Tesalia GYE", at: "2026-10-23T18:40:16.850Z", d: "2026-10-18" },
   { id: "rbml8m1", a: "Agencia Norte GYE", at: "2026-10-17T22:51:48.373Z", d: "2026-07-10" },
   { id: "reke2bu", a: "Agencia Norte GYE", at: "2026-10-17T22:59:14.229Z", d: "2026-02-06" },
   { id: "remrtwp", a: "Agencia Latacunga", at: "2026-10-17T22:50:18.716Z", d: "2026-06-09" },
@@ -417,7 +419,9 @@ export const AUDIT_REPORTS_DATA = [
   { id: "rfdv2nl", a: "Planta Tesalia GYE", at: "2026-10-17T22:55:58.589Z", d: null },
   { id: "rfw8lgi", a: "Agencia Quito Norte", at: "2026-10-17T22:57:26.100Z", d: "2026-04-30" },
   { id: "rgcvs6r", a: "Planta Tesalia GYE", at: "2026-10-17T22:58:02.661Z", d: "2026-03-27" },
+  { id: "rgmzs1s", a: "Agencia Norte GYE", at: "2026-11-02T10:40:04.754Z", d: "2026-10-28" },
   { id: "rgpqgo", a: "Planta Tesalia GYE", at: "2026-10-17T22:49:06.213Z", d: "2026-02-18" },
+  { id: "rhl25i", a: "Planta Tesalia GYE", at: "2026-11-16T15:31:08.978Z", d: "2026-10-31" },
   { id: "ri6j4se", a: "Agencia Norte GYE", at: "2026-10-17T22:51:37.861Z", d: "2026-07-03" },
   { id: "rizs51j", a: "Agencia Sur GYE", at: "2026-10-17T22:52:48.645Z", d: "2026-08-14" },
   { id: "rj0bo7y", a: "Agencia Sur GYE", at: "2026-10-17T22:56:13.309Z", d: "2026-08-14" },
@@ -456,6 +460,7 @@ export const AUDIT_REPORTS_DATA = [
   { id: "rv39bep", a: "Planta Tesalia GYE", at: "2026-10-17T22:57:06.885Z", d: "2026-05-22" },
   { id: "rvjfl9r", a: "Planta Tesalia GYE", at: "2026-10-17T22:56:13.309Z", d: "2026-06-01" },
   { id: "rvlllnx", a: "Agencia Ambato", at: "2026-10-17T22:55:18.781Z", d: "2026-10-11" },
+  { id: "rvq41l7", a: "Planta Tesalia GYE", at: "2026-11-02T10:39:46.762Z", d: "2026-10-24" },
   { id: "rvw38qb", a: "Planta Tesalia GYE", at: "2026-10-17T22:53:22.541Z", d: null },
   { id: "rwl4ml9", a: "Planta Tesalia GYE", at: "2026-10-17T22:59:14.229Z", d: "2026-11-20" },
   { id: "rxdd122", a: "Planta Tesalia GYE", at: "2026-10-17T22:57:48.117Z", d: "2026-04-06" },
@@ -467,183 +472,171 @@ export const AUDIT_REPORTS_DATA = [
   { id: "rzl7kvk", a: "Agencia Sur GYE", at: "2026-10-17T22:56:49.829Z", d: "2026-06-29" }
 ];
 
-export const INITIAL_EXTRA_INCIDENTS: IncidentRecord[] = [
-  { id: 'n1792028210917', a: 'Agencia Norte GYE', t: 2, e: 2, d: '2026-10-15', source: 'base', author: 'CCO' },
-  { id: 'n1792058755881', a: 'Agencia Norte GYE', t: 3, e: 2, d: '2026-10-15', source: 'base', author: 'CCO' }
-];
+export const INITIAL_EXTRA_INCIDENTS: IncidentRecord[] = [];
 
 export const INITIAL_FEED: FeedState = {
   nov: {
     '2026-10-12_D': { ag: {}, at: '2026-10-17T16:56:49.229Z', d: '2026-10-12', t: 'D' },
-    '2026-10-12_N': {
-      ag: {
-        'Agencia Norte GYE': [1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-        'Agencia Sur GYE': [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-        'Planta Milagro': [1, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-        'Planta Tesalia GYE': [1, 0, 0, 0, 1, 0, 0, 0, 0, 1]
-      },
-      at: '2026-10-17T23:37:12.183Z',
-      d: '2026-10-12',
-      t: 'N'
-    },
-    '2026-10-13_D': {
-      ag: { 'Agencia Norte GYE': [1, 0, 0, 1, 0, 0, 0, 0, 0, 1] },
-      at: '2026-10-17T23:37:12.183Z',
-      d: '2026-10-13',
-      t: 'D'
-    },
-    '2026-10-13_N': {
-      ag: { 'Planta Milagro': [1, 0, 0, 0, 0, 1, 0, 0, 0, 1] },
-      at: '2026-10-17T23:37:12.183Z',
-      d: '2026-10-13',
-      t: 'N'
-    },
+    '2026-10-12_N': { ag: { 'Agencia Norte GYE': [1, 1, 0, 0, 0, 0, 0, 0, 0, 1], 'Agencia Sur GYE': [1, 0, 0, 0, 1, 0, 0, 0, 0, 1], 'Planta Milagro': [1, 0, 0, 0, 1, 0, 0, 0, 0, 1], 'Planta Tesalia GYE': [1, 0, 0, 0, 1, 0, 0, 0, 0, 1] }, at: '2026-10-20T05:59:10.016Z', d: '2026-10-12', t: 'N' },
+    '2026-10-13_D': { ag: { 'Agencia Norte GYE': [1, 0, 0, 1, 0, 0, 0, 0, 0, 1] }, at: '2026-10-20T05:59:10.016Z', d: '2026-10-13', t: 'D' },
+    '2026-10-13_N': { ag: { 'Planta Milagro': [1, 0, 0, 0, 0, 1, 0, 0, 0, 1] }, at: '2026-10-20T05:59:10.016Z', d: '2026-10-13', t: 'N' },
     '2026-10-14_D': { ag: {}, at: '2026-10-17T16:56:49.229Z', d: '2026-10-14', t: 'D' },
-    '2026-10-14_N': {
-      ag: { 'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 0, 0, 1] },
-      at: '2026-10-17T23:37:12.183Z',
-      d: '2026-10-14',
-      t: 'N'
-    },
-    '2026-10-15_D': {
-      ag: {
-        'Agencia Ibarra': [1, 0, 0, 1, 0, 0, 0, 0, 0, 1],
-        'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0],
-        'Planta Milagro': [1, 0, 0, 1, 0, 0, 0, 1, 0, 0]
-      },
-      at: '2026-10-17T23:37:12.183Z',
-      d: '2026-10-15',
-      t: 'D'
-    },
-    '2026-10-15_N': {
-      ag: {
-        'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0],
-        'Agencia Sur GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0],
-        'Planta Tesalia GYE': [1, 0, 1, 0, 0, 0, 0, 1, 0, 0]
-      },
-      at: '2026-10-17T23:37:12.183Z',
-      d: '2026-10-15',
-      t: 'N'
-    },
-    '2026-10-16_D': {
-      ag: {
-        'Agencia Loja': [1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-        'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0]
-      },
-      at: '2026-10-17T23:37:12.183Z',
-      d: '2026-10-16',
-      t: 'D'
-    },
-    '2026-10-16_N': {
-      ag: { 'Planta Milagro': [1, 0, 0, 1, 0, 0, 0, 0, 0, 1] },
-      at: '2026-10-17T23:37:12.183Z',
-      d: '2026-10-16',
-      t: 'N'
-    },
-    '2026-10-17_D': {
-      ag: {
-        'Agencia Salinas': [1, 1, 0, 0, 0, 0, 0, 0, 0, 1],
-        'Planta Tesalia GYE': [1, 0, 0, 0, 1, 0, 0, 0, 0, 1]
-      },
-      at: '2026-10-17T23:37:12.183Z',
-      d: '2026-10-17',
-      t: 'D'
-    }
+    '2026-10-14_N': { ag: { 'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 0, 0, 1] }, at: '2026-10-20T05:59:10.016Z', d: '2026-10-14', t: 'N' },
+    '2026-10-15_D': { ag: { 'Agencia Ibarra': [1, 0, 0, 1, 0, 0, 0, 0, 0, 1], 'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0], 'Planta Milagro': [1, 0, 0, 1, 0, 0, 0, 1, 0, 0] }, at: '2026-10-20T05:59:10.016Z', d: '2026-10-15', t: 'D' },
+    '2026-10-15_N': { ag: { 'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0], 'Agencia Sur GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0], 'Planta Tesalia GYE': [1, 0, 1, 0, 0, 0, 0, 1, 0, 0] }, at: '2026-10-20T05:59:10.016Z', d: '2026-10-15', t: 'N' },
+    '2026-10-16_D': { ag: { 'Agencia Loja': [1, 1, 0, 0, 0, 0, 0, 0, 0, 1], 'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0] }, at: '2026-10-20T05:59:10.016Z', d: '2026-10-16', t: 'D' },
+    '2026-10-16_N': { ag: { 'Planta Milagro': [1, 0, 0, 1, 0, 0, 0, 0, 0, 1] }, at: '2026-10-20T05:59:10.016Z', d: '2026-10-16', t: 'N' },
+    '2026-10-17_D': { ag: { 'Agencia Salinas': [1, 1, 0, 0, 0, 0, 0, 0, 0, 1], 'Planta Tesalia GYE': [1, 0, 0, 0, 1, 0, 0, 0, 0, 1] }, at: '2026-10-20T05:59:10.016Z', d: '2026-10-17', t: 'D' },
+    '2026-10-17_N': { ag: {}, at: '2026-10-20T05:59:10.016Z', d: '2026-10-17', t: 'N' },
+    '2026-10-18_D': { ag: { 'Agencia Manta': [1, 0, 0, 1, 0, 0, 0, 0, 0, 1] }, at: '2026-10-20T05:59:10.016Z', d: '2026-10-18', t: 'D' },
+    '2026-10-18_N': { ag: { 'Planta Tesalia GYE': [3, 0, 0, 1, 0, 2, 0, 2, 0, 1] }, at: '2026-10-20T05:59:10.016Z', d: '2026-10-18', t: 'N' },
+    '2026-10-19_D': { ag: { 'Planta Tesalia GYE': [1, 0, 1, 0, 0, 0, 0, 0, 0, 1] }, at: '2026-10-26T11:41:01.491Z', d: '2026-10-19', t: 'D' },
+    '2026-10-19_N': { ag: { 'Agencia Norte GYE': [1, 1, 0, 0, 0, 0, 0, 0, 0, 1] }, at: '2026-10-26T11:41:01.491Z', d: '2026-10-19', t: 'N' },
+    '2026-10-20_D': { ag: {}, at: '2026-10-26T11:41:01.491Z', d: '2026-10-20', t: 'D' },
+    '2026-10-20_N': { ag: { 'Planta Milagro': [1, 0, 0, 1, 0, 0, 0, 0, 0, 1] }, at: '2026-10-26T11:41:01.491Z', d: '2026-10-20', t: 'N' },
+    '2026-10-21_D': { ag: { 'Bodega MEMX Quito': [1, 0, 0, 1, 0, 0, 0, 1, 0, 0], 'Planta Tesalia GYE': [1, 0, 0, 0, 0, 0, 1, 1, 0, 0] }, at: '2026-10-26T11:41:01.491Z', d: '2026-10-21', t: 'D' },
+    '2026-10-22_D': { ag: { 'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0], 'Agencia Quito Sur': [1, 0, 0, 1, 0, 0, 0, 1, 0, 0] }, at: '2026-10-26T11:41:01.491Z', d: '2026-10-22', t: 'D' },
+    '2026-10-22_N': { ag: { 'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0], 'Agencia Sur GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0] }, at: '2026-10-26T11:41:01.491Z', d: '2026-10-22', t: 'N' },
+    '2026-10-23_D': { ag: { 'Planta Tesalia GYE': [1, 0, 0, 0, 0, 1, 0, 0, 0, 1] }, at: '2026-10-26T11:41:01.491Z', d: '2026-10-23', t: 'D' },
+    '2026-10-23_N': { ag: { 'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0], 'Agencia Sur GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0], 'Planta Milagro': [2, 0, 0, 1, 0, 0, 1, 2, 0, 0] }, at: '2026-10-26T11:41:01.491Z', d: '2026-10-23', t: 'N' },
+    '2026-10-24_D': { ag: { 'Planta Tesalia GYE': [1, 1, 0, 0, 0, 0, 0, 0, 0, 1] }, at: '2026-10-26T11:41:01.491Z', d: '2026-10-24', t: 'D' },
+    '2026-10-24_N': { ag: { 'Agencia Norte GYE': [1, 1, 0, 0, 0, 0, 0, 1, 0, 0], 'Agencia Sur GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0], 'Planta Tesalia GYE': [1, 0, 0, 1, 0, 0, 0, 1, 0, 0] }, at: '2026-10-26T11:41:01.491Z', d: '2026-10-24', t: 'N' },
+    '2026-10-25_D': { ag: { 'Planta Tesalia GYE': [1, 0, 0, 1, 0, 0, 0, 0, 1, 0] }, at: '2026-10-26T11:41:01.491Z', d: '2026-10-25', t: 'D' },
+    '2026-10-26_D': { ag: { 'Planta Tesalia GYE': [1, 0, 0, 0, 0, 0, 1, 1, 0, 0] }, at: '2026-11-02T10:42:04.563Z', d: '2026-10-26', t: 'D' },
+    '2026-10-26_N': { ag: { 'Planta Tesalia GYE': [1, 0, 0, 1, 0, 0, 0, 0, 0, 1] }, at: '2026-11-02T10:42:04.563Z', d: '2026-10-26', t: 'N' },
+    '2026-10-27_D': { ag: { 'Planta y Agencia Machala': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0] }, at: '2026-11-02T10:42:04.563Z', d: '2026-10-27', t: 'D' },
+    '2026-10-27_N': { ag: { 'Agencia Manta': [1, 0, 0, 1, 0, 0, 0, 0, 0, 1] }, at: '2026-11-02T10:42:04.563Z', d: '2026-10-27', t: 'N' },
+    '2026-10-28_N': { ag: { 'Agencia Salinas': [1, 1, 0, 0, 0, 0, 0, 1, 0, 0] }, at: '2026-11-02T10:42:04.563Z', d: '2026-10-28', t: 'N' },
+    '2026-10-29_D': { ag: { 'Agencia Norte GYE': [1, 0, 1, 0, 0, 0, 0, 0, 0, 1], 'Planta Tesalia GYE': [1, 0, 0, 1, 0, 0, 0, 0, 0, 1] }, at: '2026-11-02T10:42:04.563Z', d: '2026-10-29', t: 'D' },
+    '2026-10-29_N': { ag: { 'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0], 'Agencia Sur GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0] }, at: '2026-11-02T10:42:04.563Z', d: '2026-10-29', t: 'N' },
+    '2026-10-30_D': { ag: { 'Planta Tesalia GYE': [1, 0, 1, 0, 0, 0, 0, 0, 0, 1] }, at: '2026-11-02T10:42:04.563Z', d: '2026-10-30', t: 'D' },
+    '2026-10-30_N': { ag: { 'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0] }, at: '2026-11-02T10:42:04.563Z', d: '2026-10-30', t: 'N' },
+    '2026-10-31_N': { ag: { 'Agencia Norte GYE': [1, 0, 1, 0, 0, 0, 0, 0, 0, 1] }, at: '2026-11-02T10:42:04.563Z', d: '2026-10-31', t: 'N' },
+    '2026-11-01_N': { ag: {}, at: '2026-11-02T10:42:04.563Z', d: '2026-11-01', t: 'N' },
+    '2026-11-02_D': { ag: { 'Agencia Quevedo': [1, 0, 0, 1, 0, 0, 0, 0, 1, 0], 'Agencia Sur GYE': [1, 0, 0, 0, 0, 1, 0, 1, 0, 0] }, at: '2026-11-10T18:41:26.843Z', d: '2026-11-02', t: 'D' },
+    '2026-11-02_N': { ag: { 'Agencia Norte GYE': [1, 1, 0, 0, 0, 0, 0, 1, 0, 0] }, at: '2026-11-10T18:41:26.843Z', d: '2026-11-02', t: 'N' },
+    '2026-11-03_D': { ag: { 'Agencia Sur GYE': [1, 0, 0, 0, 0, 0, 1, 1, 0, 0] }, at: '2026-11-10T18:41:26.843Z', d: '2026-11-03', t: 'D' },
+    '2026-11-03_N': { ag: { 'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0], 'Agencia Sur GYE': [2, 0, 0, 0, 2, 0, 0, 2, 0, 0] }, at: '2026-11-10T18:41:26.843Z', d: '2026-11-03', t: 'N' },
+    '2026-11-04_D': { ag: { 'Bodega MEMX Quito': [1, 0, 0, 1, 0, 0, 0, 0, 0, 1] }, at: '2026-11-10T18:41:26.843Z', d: '2026-11-04', t: 'D' },
+    '2026-11-04_N': { ag: { 'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0], 'Agencia Salinas': [1, 0, 1, 0, 0, 0, 0, 1, 0, 0], 'Agencia Sur GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0], 'Bodega MEMX Quito': [1, 0, 0, 1, 0, 0, 0, 1, 0, 0] }, at: '2026-11-10T18:41:26.843Z', d: '2026-11-04', t: 'N' },
+    '2026-11-05_D': { ag: {}, at: '2026-11-10T18:41:26.843Z', d: '2026-11-05', t: 'D' },
+    '2026-11-05_N': { ag: { 'Agencia Norte GYE': [2, 0, 0, 0, 2, 0, 0, 2, 0, 0], 'Agencia Sur GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0] }, at: '2026-11-10T18:41:26.843Z', d: '2026-11-05', t: 'N' },
+    '2026-11-06_D': { ag: {}, at: '2026-11-10T18:41:26.843Z', d: '2026-11-06', t: 'D' },
+    '2026-11-06_N': { ag: { 'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 0, 0, 1] }, at: '2026-11-10T18:41:26.843Z', d: '2026-11-06', t: 'N' },
+    '2026-11-07_D': { ag: {}, at: '2026-11-10T18:41:26.843Z', d: '2026-11-07', t: 'D' },
+    '2026-11-07_N': { ag: {}, at: '2026-11-10T18:41:26.843Z', d: '2026-11-07', t: 'N' },
+    '2026-11-08_D': { ag: { 'Agencia Norte GYE': [1, 0, 0, 0, 0, 1, 0, 1, 0, 0] }, at: '2026-11-10T18:41:26.843Z', d: '2026-11-08', t: 'D' },
+    '2026-11-08_N': { ag: { 'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0] }, at: '2026-11-10T18:41:26.843Z', d: '2026-11-08', t: 'N' },
+    '2026-11-09_D': { ag: { 'Agencia Norte GYE': [1, 0, 0, 0, 0, 0, 1, 1, 0, 0] }, at: '2026-11-16T15:26:17.610Z', d: '2026-11-09', t: 'D' },
+    '2026-11-09_N': { ag: { 'Agencia Norte GYE': [1, 1, 0, 0, 0, 0, 0, 1, 0, 0], 'Agencia Sur GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0] }, at: '2026-11-16T15:26:17.610Z', d: '2026-11-09', t: 'N' },
+    '2026-11-10_D': { ag: { 'Agencia Atacames': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0] }, at: '2026-11-16T15:26:17.610Z', d: '2026-11-10', t: 'D' },
+    '2026-11-10_N': { ag: { 'Agencia Latacunga': [1, 0, 0, 1, 0, 0, 0, 0, 0, 1], 'Agencia Manta': [1, 0, 0, 1, 0, 0, 0, 1, 0, 0], 'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0], 'Agencia Santo Domingo': [1, 0, 0, 1, 0, 0, 0, 1, 0, 0], 'Agencia Sur GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0], 'Planta Tesalia GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0] }, at: '2026-11-16T15:26:17.610Z', d: '2026-11-10', t: 'N' },
+    '2026-11-11_D': { ag: {}, at: '2026-11-16T15:26:17.610Z', d: '2026-11-11', t: 'D' },
+    '2026-11-11_N': { ag: { 'Agencia Norte GYE': [1, 0, 0, 0, 1, 0, 0, 1, 0, 0], 'Agencia Quevedo': [1, 0, 0, 1, 0, 0, 0, 1, 0, 0], 'Planta Tesalia GYE': [1, 0, 0, 1, 0, 0, 0, 1, 0, 0] }, at: '2026-11-16T15:26:17.610Z', d: '2026-11-11', t: 'N' },
+    '2026-11-12_D': { ag: {}, at: '2026-11-16T15:26:17.610Z', d: '2026-11-12', t: 'D' },
+    '2026-11-12_N': { ag: {}, at: '2026-11-16T15:26:17.610Z', d: '2026-11-12', t: 'N' },
+    '2026-11-13_D': { ag: { 'Agencia Santo Domingo': [1, 0, 0, 1, 0, 0, 0, 0, 0, 1], 'Agencia Sur GYE': [1, 0, 0, 1, 0, 0, 0, 0, 0, 1] }, at: '2026-11-16T15:26:17.610Z', d: '2026-11-13', t: 'D' },
+    '2026-11-13_N': { ag: { 'Agencia Norte GYE': [1, 0, 0, 0, 0, 0, 1, 1, 0, 0] }, at: '2026-11-16T15:26:17.610Z', d: '2026-11-13', t: 'N' },
+    '2026-11-14_D': { ag: { 'Agencia Norte GYE': [1, 0, 0, 1, 0, 0, 0, 1, 0, 0] }, at: '2026-11-16T15:26:17.610Z', d: '2026-11-14', t: 'D' },
+    '2026-11-14_N': { ag: { 'Planta Tesalia GYE': [1, 0, 0, 0, 0, 0, 1, 0, 0, 1] }, at: '2026-11-16T15:26:17.610Z', d: '2026-11-14', t: 'N' },
+    '2026-11-15_D': { ag: {}, at: '2026-11-16T15:26:17.610Z', d: '2026-11-15', t: 'D' },
+    '2026-11-15_N': { ag: {}, at: '2026-11-16T15:26:17.610Z', d: '2026-11-15', t: 'N' }
   },
   bl: {
     ag: {
-      'Agencia Ambato': [184, 65],
-      'Agencia Atacames': [189, 60],
-      'Agencia Cuenca': [121, 128],
-      'Agencia Ibarra': [61, 188],
-      'Agencia Latacunga': [55, 194],
-      'Agencia Loja': [39, 210],
-      'Agencia Manta': [238, 11],
-      'Agencia Norte GYE': [206, 43],
-      'Agencia Puyo': [28, 221],
-      'Agencia Quevedo': [77, 172],
-      'Agencia Quito Norte': [198, 51],
-      'Agencia Quito Sur': [197, 52],
-      'Agencia Salinas': [72, 177],
-      'Agencia Santo Domingo': [167, 82],
-      'Agencia Sur GYE': [205, 44],
-      'Planta y Agencia Machala': [81, 168]
+      'Agencia Ambato': [200, 74],
+      'Agencia Atacames': [207, 67],
+      'Agencia Cuenca': [130, 144],
+      'Agencia Ibarra': [68, 206],
+      'Agencia Latacunga': [61, 213],
+      'Agencia Loja': [45, 229],
+      'Agencia Manta': [263, 12],
+      'Agencia Norte GYE': [226, 48],
+      'Agencia Puyo': [33, 242],
+      'Agencia Quevedo': [85, 189],
+      'Agencia Quito Norte': [218, 56],
+      'Agencia Quito Sur': [216, 58],
+      'Agencia Salinas': [82, 193],
+      'Agencia Santo Domingo': [184, 90],
+      'Agencia Sur GYE': [224, 50],
+      'Planta y Agencia Machala': [88, 186]
     },
-    at: '2026-10-17T16:57:57.206Z',
+    at: '2026-11-16T15:26:51.674Z',
     nat: MONTHLY_TRENDS.bl
   },
   sp: {
     ag: {
-      'Agencia Ambato': [91, 487],
-      'Agencia Atacames': [62, 516],
-      'Agencia Cuenca': [78, 500],
-      'Agencia Ibarra': [69, 509],
-      'Agencia Latacunga': [77, 501],
-      'Agencia Loja': [227, 351],
-      'Agencia Manta': [196, 382],
-      'Agencia Norte GYE': [571, 7],
-      'Agencia Puyo': [4, 574],
-      'Agencia Quevedo': [127, 451],
-      'Agencia Quito Norte': [458, 120],
-      'Agencia Quito Sur': [443, 135],
-      'Agencia Salinas': [54, 524],
-      'Agencia Santo Domingo': [84, 494],
-      'Agencia Sur GYE': [543, 35],
-      'Bodega MEMX Quito': [442, 136],
-      'Edificio WorQ': [170, 408],
-      'Planta Machachi': [285, 293],
-      'Planta Milagro': [233, 345],
-      'Planta Tesalia GYE': [574, 4],
-      'Planta y Agencia Machala': [117, 461]
+      'Agencia Ambato': [98, 540],
+      'Agencia Atacames': [64, 574],
+      'Agencia Cuenca': [98, 540],
+      'Agencia Ibarra': [74, 564],
+      'Agencia Latacunga': [84, 554],
+      'Agencia Loja': [239, 399],
+      'Agencia Manta': [217, 421],
+      'Agencia Norte GYE': [629, 9],
+      'Agencia Puyo': [5, 633],
+      'Agencia Quevedo': [145, 493],
+      'Agencia Quito Norte': [510, 128],
+      'Agencia Quito Sur': [487, 151],
+      'Agencia Salinas': [58, 580],
+      'Agencia Santo Domingo': [96, 542],
+      'Agencia Sur GYE': [596, 42],
+      'Bodega MEMX Quito': [489, 149],
+      'Edificio WorQ': [187, 451],
+      'Planta Machachi': [319, 319],
+      'Planta Milagro': [241, 397],
+      'Planta Tesalia GYE': [633, 5],
+      'Planta y Agencia Machala': [134, 504]
     },
-    at: '2026-10-17T16:53:21.014Z',
+    at: '2026-11-16T15:26:55.378Z',
     nat: MONTHLY_TRENDS.sp
   },
   dc: {
     ag: {
-      'Agencia Ambato': 96,
+      'Agencia Ambato': 156,
       'Agencia Atacames': 324,
       'Agencia Cuenca': 0,
       'Agencia Ibarra': 4,
       'Agencia Latacunga': 35,
       'Agencia Loja': 1,
-      'Agencia Manta': 741,
-      'Agencia Norte GYE': 768,
+      'Agencia Manta': 765,
+      'Agencia Norte GYE': 798,
       'Agencia Quevedo': 20,
       'Agencia Quito Norte': 0,
       'Agencia Quito Sur': 0,
-      'Agencia Salinas': 127,
+      'Agencia Salinas': 153,
       'Agencia Santo Domingo': 263,
       'Agencia Sur GYE': 6,
       'Planta Machachi': 0,
       'Planta Milagro': 0,
       'Planta Tesalia GYE': 0,
-      'Planta y Agencia Machala': 783
+      'Planta y Agencia Machala': 825
     },
-    at: '2026-10-15T06:20:03.355Z',
+    at: '2026-11-16T15:24:09.810Z',
     nat: MONTHLY_TRENDS.dc
   },
   bq: {
     ...BLOCKED_PERSONNEL,
-    at: '2026-10-17T16:47:47.606Z'
+    at: '2026-11-16T15:27:06.234Z'
   },
   cam: {
-    at: '2026-10-17T16:55:22.053Z',
-    date: '2026-10-17',
-    no: 1,
-    op: 615,
+    at: '2026-11-16T15:23:48.443Z',
+    date: '2026-11-16',
+    no: 2,
+    op: 617,
     t: 'D',
     sites: CAMERAS_INITIAL.sites
   },
   camm: {
-    at: '2026-10-17T16:55:22.053Z',
+    at: '2026-11-16T15:23:48.443Z',
     months: {
-      OCT: { cams: 618, n: 33, no: 4.36, pct: 99.29 }
+      OCT: { cams: 618, n: 50, no: 3.4, pct: 99.45 },
+      NOV: { cams: 619, n: 31, no: 6.39, pct: 98.97 }
     }
   },
   vl: {
     ...VALIDATIONS,
-    at: '2026-10-17T16:49:33.493Z'
+    at: '2026-11-16T15:26:37.330Z'
   },
   rev: AUDIT_REPORTS_DATA.reduce((acc, item) => {
     acc[item.id] = { a: item.a, d: item.d, at: item.at || '2026-10-17T22:50:00Z' };
@@ -663,31 +656,31 @@ export const METHODOLOGY_DEFINITIONS = [
     indicator: 'Novedades e Incidencias',
     formula: 'Suma agregada de novedades de las 21 sedes operativas + cargas de turnos Excel + registros manuales',
     criteria: 'Reportes semanales de novedades del CCO (Excel), más bitácora manual y cargas posteriores. Cada fila con detalle cuenta una novedad.',
-    period: 'Enero – Octubre 2026'
+    period: 'Enero – Noviembre 2026'
   },
   {
     indicator: 'Cámaras CCTV Operativas',
     formula: 'Operativas ÷ Total Cámaras Instaladas (Operativas + Sin operar)',
     criteria: 'Control de cámaras del último turno diurno/nocturno registrado en las 21 localidades monitoreadas.',
-    period: 'Último turno reportado'
+    period: 'Corte 16/11/2026 (Turno Día)'
   },
   {
     indicator: 'Supervisión de Turnos',
     formula: 'Turnos con supervisión efectiva ÷ Turnos totales registrados (SI ÷ [SI + NO])',
     criteria: 'Control de supervisión: 2 turnos por día y sede (día y noche). Promedio semanal por sede = porcentaje × 14 turnos.',
-    period: 'Enero – Octubre 2026'
+    period: 'Enero – Noviembre 2026'
   },
   {
     indicator: 'Ingreso de Blindados',
     formula: 'Días con ingreso efectivo ÷ Días operativos evaluados (Lunes a Sábado)',
     criteria: 'Frecuencia de blindados: hora registrada = ingreso; NO INGRESA = sin ingreso. Promedio semanal = porcentaje × 6 días.',
-    period: 'Enero – Octubre 2026'
+    period: 'Enero – Noviembre 2026'
   },
   {
     indicator: 'Decomisos Incautados',
     formula: 'Suma consolidada de unidades de producto incautadas por sede',
     criteria: 'Control de decomisos (hojas mensuales y registros por sede). Se suman las unidades incautadas cada día.',
-    period: 'Enero – Octubre 2026'
+    period: 'Enero – Noviembre 2026'
   },
   {
     indicator: 'Personal Bloqueado',
