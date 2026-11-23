@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Shield, Clock, Download, PlusCircle, HelpCircle, Search, RefreshCw, FileSpreadsheet } from 'lucide-react';
+import { Shield, Clock, Download, PlusCircle, HelpCircle, Search, RefreshCw, FileSpreadsheet, RotateCw } from 'lucide-react';
 
 interface HeaderProps {
   searchQuery: string;
@@ -10,6 +10,8 @@ interface HeaderProps {
   weatherLive: boolean;
   onRefreshWeather: () => void;
   isRefreshingWeather: boolean;
+  onSyncVercel: () => void;
+  isSyncingVercel: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -20,7 +22,9 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenMethodology,
   weatherLive,
   onRefreshWeather,
-  isRefreshingWeather
+  isRefreshingWeather,
+  onSyncVercel,
+  isSyncingVercel
 }) => {
   const [currentTime, setCurrentTime] = useState<string>('');
   const [currentDate, setCurrentDate] = useState<string>('');
@@ -116,6 +120,17 @@ export const Header: React.FC<HeaderProps> = ({
           >
             <RefreshCw className={`w-3.5 h-3.5 text-blue-700 ${isRefreshingWeather ? 'animate-spin' : ''}`} />
             <span className="hidden sm:inline">Clima</span>
+          </button>
+
+          {/* Sync / Update from Vercel & GitHub Button */}
+          <button
+            onClick={onSyncVercel}
+            disabled={isSyncingVercel}
+            title="Sincronizar con el repositorio y despliegue de Vercel"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-blue-300 bg-blue-50 text-blue-900 hover:bg-blue-100 disabled:opacity-60 transition-colors"
+          >
+            <RotateCw className={`w-3.5 h-3.5 text-blue-700 ${isSyncingVercel ? 'animate-spin' : ''}`} />
+            <span className="hidden sm:inline">{isSyncingVercel ? 'Actualizando...' : 'Actualizar'}</span>
           </button>
 
           {/* Action: Methodology / Formulas */}

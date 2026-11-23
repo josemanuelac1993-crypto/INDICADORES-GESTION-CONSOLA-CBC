@@ -63,7 +63,11 @@ import {
   Filter,
   Trash2,
   PlusCircle,
-  FileSpreadsheet
+  FileSpreadsheet,
+  CheckCircle2,
+  ExternalLink,
+  RefreshCw,
+  X
 } from 'lucide-react';
 
 const STORAGE_FEED_KEY = 'cco_tesalia_feed_v3';
@@ -134,6 +138,18 @@ export default function App() {
   const [weatherLive, setWeatherLive] = useState<boolean>(false);
   const [isRefreshingWeather, setIsRefreshingWeather] = useState<boolean>(false);
   const [gmpQuotaExceeded, setGmpQuotaExceeded] = useState<boolean>(false);
+  const [isSyncingVercel, setIsSyncingVercel] = useState<boolean>(false);
+  const [vercelSyncInfo, setVercelSyncInfo] = useState<{
+    ok: boolean;
+    message: string;
+    githubSha?: string | null;
+    githubMessage?: string;
+    vercelState?: string;
+    vercelUpdatedAt?: string | null;
+    targetUrl?: string;
+    hasNewerBundle?: boolean;
+    deployTriggered?: boolean;
+  } | null>(null);
 
   // Dynamic Feed State (persisted in localStorage, seeded with INITIAL_FEED)
   const [feedState, setFeedState] = useState<FeedState>(() => {
@@ -175,6 +191,122 @@ export default function App() {
     setWeatherData(data);
     setWeatherLive(true);
     setIsRefreshingWeather(false);
+  };
+
+  // Check GitHub -> Vercel deployment status, trigger Deploy Hook if configured, and reload local repo/data
+  const handleSyncVercel = async () => {
+    if (isSyncingVercel) return;
+    setIsSyncingVercel(true);
+    try {
+      const currentScript = document
+        .querySelector('script[src*="/assets/index-"]')
+        ?.getAttribute('src');
+
+      let syncPayload: any = null;
+      const res = await fetch('/api/vercel-sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store'
+      }).catch(() => null);
+
+      if (res && res.ok) {
+        syncPayload = await res.json();
+      } else {
+        // Fallback when running without backend route: query public GitHub commits & status directly
+        const repo = 'josemanuelac1993-crypto/INDICADORES-GESTION-CONSOLA-CBC';
+        const cRes = await fetch(`https://api.github.com/repos/${repo}/commits/main`, {
+          cache: 'no-store'
+        });
+        if (cRes.ok) {
+          const cData = await cRes.json();
+          const sRes = await fetch(`https://api.github.com/repos/${repo}/commits/${cData.sha}/status`, {
+            cache: 'no-store'
+          });
+          const sData = sRes.ok ? await sRes.json() : null;
+          const vSt = Array.isArray(sData?.statuses)
+            ? sData.statuses.find((s: any) => String(s?.context || '').toLowerCase().includes('vercel'))
+            : null;
+          syncPayload = {
+            ok: true,
+            github: {
+              sha: String(cData.sha || '').slice(0, 7),
+              message: String(cData?.commit?.message || '').split('\n')[0],
+              date: cData?.commit?.author?.date
+            },
+            vercelStatus: vSt
+              ? {
+                  state: vSt.state,
+                  description: vSt.description,
+                  updatedAt: vSt.updated_at,
+                  targetUrl: vSt.target_url
+                }
+              : null,
+            vercelLive: null,
+            hookConfigured: false,
+            deployTriggered: false
+          };
+        }
+      }
+
+      // Refresh REPO PLATAFORMA file listing & weather simultaneously
+      fetch('/api/repo/files', { cache: 'no-store' })
+        .then(r => (r.ok ? r.json() : null))
+        .then(d => {
+          if (d && Array.isArray(d.files)) setRepoFiles(d.files);
+        })
+        .catch(() => {});
+
+      const remoteBundle = syncPayload?.vercelLive?.assetBundle || null;
+      const hasNewerBundle = Boolean(
+        remoteBundle &&
+          currentScript &&
+          remoteBundle !== currentScript &&
+          window.location.hostname.includes('vercel.app')
+      );
+
+      if (syncPayload?.ok) {
+        const ghSha = syncPayload.github?.sha || null;
+        const ghMsg = syncPayload.github?.message || '';
+        const vState = syncPayload.vercelStatus?.state;
+        const vDesc = syncPayload.vercelStatus?.description || (vState ? `Estado: ${vState}` : 'Sin despliegue registrado para este commit');
+        const vUpdated = syncPayload.vercelLive?.lastModified || syncPayload.vercelStatus?.updatedAt || null;
+
+        let message = '';
+        if (syncPayload.deployTriggered) {
+          message = `Despliegue en Vercel iniciado desde GitHub (${ghSha || 'main'}). Tarda ~1-2 min en reflejarse.`;
+        } else if (hasNewerBundle) {
+          message = `Hay una nueva versión publicada en Vercel (${ghSha || 'main'}). Recarga para aplicarla.`;
+        } else if (vState === 'success') {
+          message = `Vercel y GitHub sincronizados en ${ghSha || 'main'} (${vDesc}).`;
+        } else {
+          message = `Último commit en GitHub (${ghSha || 'main'}) aún sin despliegue completado en Vercel.`;
+        }
+
+        setVercelSyncInfo({
+          ok: true,
+          message,
+          githubSha: ghSha,
+          githubMessage: ghMsg,
+          vercelState: vState || 'unknown',
+          vercelUpdatedAt: vUpdated,
+          targetUrl: syncPayload.vercelStatus?.targetUrl || 'https://indicadores-gestion-consola-cbc.vercel.app',
+          hasNewerBundle,
+          deployTriggered: Boolean(syncPayload.deployTriggered)
+        });
+      } else {
+        setVercelSyncInfo({
+          ok: false,
+          message: 'No se pudo verificar el estado del repositorio de Vercel en este momento.'
+        });
+      }
+    } catch {
+      setVercelSyncInfo({
+        ok: false,
+        message: 'Error de conexión al consultar Vercel y GitHub.'
+      });
+    } finally {
+      setIsSyncingVercel(false);
+    }
   };
 
   useEffect(() => {
@@ -794,7 +926,73 @@ export default function App() {
         weatherLive={weatherLive}
         onRefreshWeather={loadWeather}
         isRefreshingWeather={isRefreshingWeather}
+        onSyncVercel={handleSyncVercel}
+        isSyncingVercel={isSyncingVercel}
       />
+
+      {/* Vercel & GitHub Sync Status Banner */}
+      {vercelSyncInfo && (
+        <div
+          className={`border-b px-4 sm:px-6 py-2.5 text-xs ${
+            vercelSyncInfo.ok
+              ? 'bg-blue-50 border-blue-200 text-blue-950'
+              : 'bg-amber-50 border-amber-200 text-amber-950'
+          }`}
+        >
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div className="flex items-start sm:items-center gap-2 min-w-0">
+              <CheckCircle2 className="w-4 h-4 text-blue-700 shrink-0 mt-0.5 sm:mt-0" />
+              <div className="min-w-0">
+                <span className="font-bold">{vercelSyncInfo.message}</span>
+                {vercelSyncInfo.githubMessage && (
+                  <span className="text-slate-700 ml-2 hidden md:inline">
+                    · Commit: "{vercelSyncInfo.githubMessage}"
+                  </span>
+                )}
+                {vercelSyncInfo.vercelUpdatedAt && (
+                  <span className="text-slate-600 ml-2 font-mono-tabular">
+                    · Último build: {new Date(vercelSyncInfo.vercelUpdatedAt).toLocaleString('es-EC')}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              {vercelSyncInfo.targetUrl && (
+                <a
+                  href={vercelSyncInfo.targetUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-white border border-blue-300 text-blue-800 hover:bg-blue-100 font-semibold transition-colors"
+                >
+                  <span>Ver Vercel</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              )}
+              <button
+                type="button"
+                onClick={() => {
+                  const url = new URL(window.location.href);
+                  url.searchParams.set('_sync', String(Date.now()));
+                  window.location.replace(url.toString());
+                }}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-blue-700 hover:bg-blue-800 text-white font-semibold transition-colors"
+                title="Forzar recarga limpia sin caché del navegador"
+              >
+                <RefreshCw className="w-3 h-3" />
+                <span>Recargar página</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setVercelSyncInfo(null)}
+                className="p-1 rounded-md hover:bg-blue-200/60 text-slate-600 hover:text-slate-900"
+                title="Cerrar aviso"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">

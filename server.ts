@@ -97,6 +97,110 @@ async function startServer() {
     res.json({ ok: true, repoReady: fs.existsSync(REPO_DIR) });
   });
 
+  // Check GitHub main vs Vercel live deployment & trigger Vercel Deploy Hook if configured
+  app.all(['/api/vercel-sync', '/api/vercel/sync'], async (req: Request, res: Response) => {
+    if (req.method !== 'GET' && req.method !== 'POST') {
+      res.status(405).json({ ok: false, error: 'Método no permitido' });
+      return;
+    }
+    try {
+      const githubRepo = 'josemanuelac1993-crypto/INDICADORES-GESTION-CONSOLA-CBC';
+      const vercelLiveUrl = 'https://indicadores-gestion-consola-cbc.vercel.app';
+      const allowedHookPrefix = 'https://api.vercel.com/v1/integrations/deploy/';
+
+      const commitRes = await fetch(`https://api.github.com/repos/${githubRepo}/commits/main`, {
+        headers: { 'User-Agent': 'CCO-Tesalia-Sync', Accept: 'application/vnd.github+json' }
+      });
+      const commitData = commitRes.ok ? ((await commitRes.json()) as any) : null;
+      const sha: string | null = commitData?.sha || null;
+
+      let vercelStatus: { state?: string; description?: string; updatedAt?: string; targetUrl?: string } | null = null;
+      if (sha) {
+        const statusRes = await fetch(`https://api.github.com/repos/${githubRepo}/commits/${sha}/status`, {
+          headers: { 'User-Agent': 'CCO-Tesalia-Sync', Accept: 'application/vnd.github+json' }
+        });
+        if (statusRes.ok) {
+          const statusJson = (await statusRes.json()) as any;
+          const vStatus = Array.isArray(statusJson?.statuses)
+            ? statusJson.statuses.find((s: any) => String(s?.context || '').toLowerCase().includes('vercel'))
+            : null;
+          if (vStatus) {
+            vercelStatus = {
+              state: vStatus.state,
+              description: vStatus.description,
+              updatedAt: vStatus.updated_at,
+              targetUrl: vStatus.target_url
+            };
+          }
+        }
+      }
+
+      let vercelLive: {
+        status: number;
+        lastModified: string | null;
+        cacheStatus: string | null;
+        ageSeconds: number | null;
+        assetBundle: string | null;
+      } | null = null;
+      try {
+        const liveRes = await fetch(`${vercelLiveUrl}/?_sync=${Date.now()}`, {
+          headers: { 'Cache-Control': 'no-cache', Pragma: 'no-cache' }
+        });
+        const html = await liveRes.text();
+        const assetMatch = html.match(/src="(\/assets\/index-[^"]+\.js)"/);
+        const ageRaw = liveRes.headers.get('age');
+        vercelLive = {
+          status: liveRes.status,
+          lastModified: liveRes.headers.get('last-modified'),
+          cacheStatus: liveRes.headers.get('x-vercel-cache'),
+          ageSeconds: ageRaw != null ? Number(ageRaw) : null,
+          assetBundle: assetMatch ? assetMatch[1] : null
+        };
+      } catch {
+        vercelLive = null;
+      }
+
+      let deployTriggered = false;
+      let deployJobId: string | null = null;
+      let hookConfigured = false;
+      const rawHook = String(process.env.VERCEL_DEPLOY_HOOK_URL || '').trim();
+      if (rawHook.startsWith(allowedHookPrefix)) {
+        hookConfigured = true;
+        if (req.method === 'POST') {
+          const hookRes = await fetch(rawHook, { method: 'POST' });
+          if (hookRes.ok) {
+            const hookJson = (await hookRes.json().catch(() => null)) as any;
+            deployTriggered = true;
+            deployJobId = hookJson?.job?.id || 'triggered';
+          }
+        }
+      }
+
+      res.setHeader('Cache-Control', 'no-store');
+      res.json({
+        ok: true,
+        checkedAt: new Date().toISOString(),
+        github: commitData
+          ? {
+              branch: 'main',
+              sha: sha ? sha.slice(0, 7) : null,
+              fullSha: sha,
+              message: String(commitData?.commit?.message || '').split('\n')[0],
+              date: commitData?.commit?.author?.date || null
+            }
+          : null,
+        vercelStatus,
+        vercelLive,
+        hookConfigured,
+        deployTriggered,
+        deployJobId
+      });
+    } catch (err) {
+      console.error('Error checking Vercel sync:', err);
+      res.status(500).json({ ok: false, error: 'Error al consultar el estado del repositorio de Vercel.' });
+    }
+  });
+
   // List stored Excel/Word files inside REPO PLATAFORMA
   app.get('/api/repo/files', async (_req: Request, res: Response) => {
     try {
