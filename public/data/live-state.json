@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-23T23:44:07.820Z",
-  "summary": "Novedad registrada: Agencia Norte GYE (2026-11-23)",
+  "updatedAt": "2026-11-23T23:46:46.174Z",
+  "summary": "Carga CCO: novedades 1 fechas/turnos (REPORTES DE NOVEDADES DEL 23 AL 29 DE NOVIEMBRE DEL 2026..xlsx)",
   "feedState": {
     "nov": {
       "2026-10-12_D": {
@@ -1762,6 +1762,37 @@
             0
           ]
         }
+      },
+      "2026-11-23_D": {
+        "d": "2026-11-23",
+        "t": "D",
+        "at": "2026-11-23T23:46:38.772Z",
+        "ag": {
+          "Planta Milagro": [
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          "Agencia Norte GYE": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            1,
+            0
+          ]
+        }
       }
     },
     "bl": {
@@ -3426,6 +3457,28 @@
     }
   ],
   "uploadHistory": [
+    {
+      "id": "up_1795477605120",
+      "timestamp": "2026-11-23 18:46",
+      "isoDate": "2026-11-23T23:46:45.120Z",
+      "filesCount": 1,
+      "fileNames": [
+        "REPORTES DE NOVEDADES DEL 23 AL 29 DE NOVIEMBRE DEL 2026..xlsx"
+      ],
+      "indicatorsUpdated": [
+        "novedades 1 fechas/turnos"
+      ],
+      "summary": "novedades 1 fechas/turnos (REPORTES DE NOVEDADES DEL 23 AL 29 DE NOVIEMBRE DEL 2026..xlsx)",
+      "storedFiles": [
+        {
+          "originalName": "REPORTES DE NOVEDADES DEL 23 AL 29 DE NOVIEMBRE DEL 2026..xlsx",
+          "storedName": "20261123_184645_805f__REPORTES_DE_NOVEDADES_DEL_23_AL_29_DE_NOVIEMBRE_DEL_2026.xlsx",
+          "size": 131167,
+          "uploadedAt": "2026-11-23T23:46:45.120Z",
+          "url": "/api/github-sync?download=20261123_184645_805f__REPORTES_DE_NOVEDADES_DEL_23_AL_29_DE_NOVIEMBRE_DEL_2026.xlsx"
+        }
+      ]
+    },
     {
       "id": "up_1795475718542",
       "timestamp": "2026-11-23 18:15",
