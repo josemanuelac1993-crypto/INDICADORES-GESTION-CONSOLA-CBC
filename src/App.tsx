@@ -9,6 +9,7 @@ import {
   MonthlyTrendsData,
   PendingUploadBatch,
   RegionName,
+  StoredRepoFile,
   UploadHistoryRecord,
   ValidationSummary,
   WeatherData
@@ -38,7 +39,8 @@ import {
   saveFeedToFirestore,
   subscribeToIncidents,
   subscribeToFeed,
-  saveUploadHistoryToFirestore
+  saveUploadHistoryToFirestore,
+  subscribeToUploadHistory
 } from './firebase/firestoreService';
 import { Header } from './components/Header';
 import { KPICards, KPIData } from './components/KPICards';
@@ -163,6 +165,9 @@ export default function App() {
     }
   });
 
+  // Locally archived files inside REPO PLATAFORMA/
+  const [repoFiles, setRepoFiles] = useState<StoredRepoFile[]>([]);
+
   // Load weather on mount
   const loadWeather = async () => {
     setIsRefreshingWeather(true);
@@ -210,6 +215,34 @@ export default function App() {
       });
     });
 
+    // Real-time synchronization of upload history from Firestore
+    const unsubHistory = subscribeToUploadHistory(firestoreHistory => {
+      setUploadHistory(prev => {
+        const map = new Map<string, UploadHistoryRecord>();
+        prev.forEach(item => map.set(item.id, item));
+        firestoreHistory.forEach(item => {
+          if (!map.has(item.id)) map.set(item.id, item);
+        });
+        const merged = Array.from(map.values())
+          .sort((a, b) => (b.isoDate || b.id).localeCompare(a.isoDate || a.id))
+          .slice(0, 40);
+        try {
+          localStorage.setItem(STORAGE_UPLOADS_KEY, JSON.stringify(merged));
+        } catch {}
+        return merged;
+      });
+    });
+
+    // Load archived files from REPO PLATAFORMA
+    fetch('/api/repo/files')
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => {
+        if (data && Array.isArray(data.files)) {
+          setRepoFiles(data.files);
+        }
+      })
+      .catch(() => {});
+
     const handleQuotaExceeded = () => setGmpQuotaExceeded(true);
     window.addEventListener('gmp-quota-exceeded', handleQuotaExceeded);
 
@@ -217,6 +250,7 @@ export default function App() {
       clearInterval(interval);
       unsubIncidents();
       unsubFeed();
+      unsubHistory();
       window.removeEventListener('gmp-quota-exceeded', handleQuotaExceeded);
     };
   }, []);
@@ -413,15 +447,25 @@ export default function App() {
   };
 
   // Apply uploaded Excel / Word batch into feedState and customIncidents
-  const handleApplyUploadBatch = (batch: PendingUploadBatch, fileNames: string[]) => {
-    const nowIso = new Date().toISOString();
+  const handleApplyUploadBatch = (
+    batch: PendingUploadBatch,
+    fileNames: string[],
+    storedFiles: StoredRepoFile[] = []
+  ) => {
+    const now = new Date();
+    const nowIso = now.toISOString();
+    const formattedTs = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(
+      now.getDate()
+    ).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(
+      now.getMinutes()
+    ).padStart(2, '0')}`;
     const indicatorsUpdated: string[] = [];
 
     const nextFeed: FeedState = JSON.parse(JSON.stringify(feedState));
 
     if (Object.keys(batch.novShifts).length > 0) {
       nextFeed.nov = { ...(nextFeed.nov || {}), ...batch.novShifts };
-      indicatorsUpdated.push('Novedades por Turno');
+      indicatorsUpdated.push(`novedades ${Object.keys(batch.novShifts).length} fechas/turnos`);
     }
 
     if (batch.cam) {
@@ -439,7 +483,7 @@ export default function App() {
         no: Object.keys(batch.cam.sites).length > 0 ? sumNo : batch.cam.no,
         sites: mergedSites
       };
-      indicatorsUpdated.push('Cámaras CCTV');
+      indicatorsUpdated.push('cámaras');
     }
 
     if (Object.keys(batch.camMonths).length > 0) {
@@ -450,7 +494,7 @@ export default function App() {
           ...batch.camMonths
         }
       };
-      if (!indicatorsUpdated.includes('Cámaras CCTV')) indicatorsUpdated.push('Cámaras CCTV');
+      if (!indicatorsUpdated.includes('cámaras')) indicatorsUpdated.push('cámaras');
     }
 
     if (batch.sp) {
@@ -462,7 +506,7 @@ export default function App() {
         },
         nat: batch.sp.nat.length > 0 ? batch.sp.nat : nextFeed.sp?.nat || []
       };
-      indicatorsUpdated.push('Supervisión de Turnos');
+      indicatorsUpdated.push('supervisión');
     }
 
     if (batch.bl) {
@@ -474,7 +518,7 @@ export default function App() {
         },
         nat: batch.bl.nat.length > 0 ? batch.bl.nat : nextFeed.bl?.nat || []
       };
-      indicatorsUpdated.push('Ingreso de Blindados');
+      indicatorsUpdated.push('blindados');
     }
 
     if (batch.dc) {
@@ -486,7 +530,7 @@ export default function App() {
         },
         nat: batch.dc.nat.length > 0 ? batch.dc.nat : nextFeed.dc?.nat || []
       };
-      indicatorsUpdated.push('Decomisos');
+      indicatorsUpdated.push('decomisos');
     }
 
     if (batch.bq) {
@@ -494,7 +538,7 @@ export default function App() {
         ...batch.bq,
         at: nowIso
       };
-      indicatorsUpdated.push('Personal Bloqueado');
+      indicatorsUpdated.push('bloqueo');
     }
 
     if (batch.vl) {
@@ -502,7 +546,7 @@ export default function App() {
         ...batch.vl,
         at: nowIso
       };
-      indicatorsUpdated.push('Validaciones');
+      indicatorsUpdated.push('validaciones');
     }
 
     const validRevs = batch.rev.filter(r => r.site);
@@ -517,16 +561,16 @@ export default function App() {
           };
         }
       });
-      indicatorsUpdated.push('Auditorías CCTV');
+      indicatorsUpdated.push(`revisiones de cámaras ${validRevs.length}`);
     }
 
     let nextIncidents = customIncidents;
+    let uniqueNewIncidents: IncidentRecord[] = [];
     if (batch.extractedIncidents.length > 0) {
       const existingHashes = new Set(
         customIncidents.map(inc => generateIncidentHash(inc.a, inc.d, inc.t, inc.x || ''))
       );
       const existingIds = new Set(customIncidents.map(inc => inc.id));
-      const uniqueNewIncidents: IncidentRecord[] = [];
       let crossDuplicatesCount = 0;
 
       for (const inc of batch.extractedIncidents) {
@@ -544,35 +588,34 @@ export default function App() {
         nextIncidents = [...uniqueNewIncidents, ...customIncidents];
         setCustomIncidents(nextIncidents);
         const dupInfo = crossDuplicatesCount > 0 ? ` (${crossDuplicatesCount} duplicados omitidos)` : '';
-        indicatorsUpdated.push(`Novedades (${uniqueNewIncidents.length} únicas integradas${dupInfo})`);
+        indicatorsUpdated.push(`novedades bitácora ${uniqueNewIncidents.length}${dupInfo}`);
       } else if (crossDuplicatesCount > 0) {
-        indicatorsUpdated.push(`Novedades (${crossDuplicatesCount} ya registradas, 0 duplicados añadidos)`);
+        indicatorsUpdated.push(`novedades bitácora (${crossDuplicatesCount} ya registradas)`);
       }
     }
 
     const newRecord: UploadHistoryRecord = {
       id: `up_${Date.now()}`,
-      timestamp: new Date().toLocaleString('es-EC', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      }),
+      timestamp: formattedTs,
+      isoDate: nowIso,
       filesCount: fileNames.length,
       fileNames,
       indicatorsUpdated,
-      summary: `${indicatorsUpdated.join(', ')} (${fileNames.join(', ')})`
+      summary: `${indicatorsUpdated.join(' · ') || 'archivos procesados'} (${fileNames.join(', ')})`,
+      storedFiles
     };
 
-    const nextHistory = [newRecord, ...uploadHistory].slice(0, 20);
+    const nextHistory = [newRecord, ...uploadHistory].slice(0, 40);
     setFeedState(nextFeed);
     setUploadHistory(nextHistory);
+    if (storedFiles.length > 0) {
+      setRepoFiles(prev => [...storedFiles, ...prev]);
+    }
 
     // Persist to Firestore
     saveFeedToFirestore(nextFeed);
-    if (batch.extractedIncidents.length > 0) {
-      saveBatchIncidentsToFirestore(batch.extractedIncidents);
+    if (uniqueNewIncidents.length > 0) {
+      saveBatchIncidentsToFirestore(uniqueNewIncidents);
     }
     saveUploadHistoryToFirestore(newRecord);
 
@@ -944,7 +987,7 @@ export default function App() {
                   <option value="Todos">Todas las Empresas</option>
                   <option value="LIDERMAN">Liderman</option>
                   <option value="CAJAMARCA">Cajamarca</option>
-                  <option value="593 SECURITY">593 Security</option>
+                  <option value="CONTROLRISK">CONTROLRISK</option>
                   <option value="HUDSON SECURITY">Hudson Security</option>
                 </select>
               </div>
@@ -1015,6 +1058,8 @@ export default function App() {
               <ExcelUploaderBlock
                 onApplyBatch={handleApplyUploadBatch}
                 uploadHistory={uploadHistory}
+                repoFiles={repoFiles}
+                auditReportsCount={auditReportsList.length}
                 onResetBaseData={handleResetBaseData}
               />
             </div>
@@ -1157,6 +1202,9 @@ export default function App() {
         onSaveIncident={handleSaveIncident}
         onApplyUploadBatch={handleApplyUploadBatch}
         agenciesByRegion={computedRegionsData}
+        uploadHistory={uploadHistory}
+        repoFiles={repoFiles}
+        auditReportsCount={auditReportsList.length}
       />
 
       {/* 3. Methodology & Governance Drawer */}

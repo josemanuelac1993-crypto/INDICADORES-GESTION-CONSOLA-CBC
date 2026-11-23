@@ -35,10 +35,12 @@
       "properties": {
         "id": { "type": "string", "description": "Identificador único del registro de carga" },
         "timestamp": { "type": "string", "description": "Fecha y hora legible de la carga" },
+        "isoDate": { "type": "string", "description": "Marca de tiempo ISO de la carga" },
         "filesCount": { "type": "number", "description": "Cantidad de archivos procesados" },
         "fileNames": { "type": "string", "description": "Nombres de los archivos procesados serializados" },
         "indicatorsUpdated": { "type": "string", "description": "Indicadores afectados serializados" },
-        "summary": { "type": "string", "description": "Resumen textual del resultado" }
+        "summary": { "type": "string", "description": "Resumen textual del resultado" },
+        "storedFiles": { "type": "string", "description": "Referencias JSON de archivos guardados en REPO PLATAFORMA" }
       },
       "required": ["id", "timestamp", "summary"]
     }

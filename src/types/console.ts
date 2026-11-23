@@ -2,7 +2,7 @@ export type RegionName = 'GYE-SALINAS-MILAGRO' | 'COSTA' | 'UIO-IBARRA' | 'SIERR
 
 export type FacilityType = 'PLANTA' | 'PLANTA + AGENCIA' | 'AGENCIA' | 'BODEGA' | 'EDIFICIO CORPORATIVO';
 
-export type SecurityCompany = 'LIDERMAN' | 'CAJAMARCA' | '593 SECURITY' | 'HUDSON SECURITY';
+export type SecurityCompany = 'LIDERMAN' | 'CAJAMARCA' | 'CONTROLRISK' | 'HUDSON SECURITY';
 
 export interface ExactLocation {
   la: number;
@@ -149,6 +149,23 @@ export interface UploadLogItem {
   summary: string;
 }
 
+export interface StoredRepoFile {
+  originalName: string;
+  storedName: string;
+  size: number;
+  uploadedAt: string;
+  url: string;
+}
+
+export interface SheetParseReport {
+  fileName: string;
+  sheetName: string;
+  parser: string;
+  rowsScanned: number;
+  extracted: number;
+  skipped: number;
+}
+
 export interface PendingUploadBatch {
   novShifts: Record<string, NovShiftEntry>;
   extractedIncidents: IncidentRecord[];
@@ -181,13 +198,18 @@ export interface PendingUploadBatch {
   duplicateCount?: number;
   unreadRowsCount?: number;
   unreadSamples?: { sheet: string; row: number; reason: string; sample: string }[];
+  totalRowsScanned?: number;
+  parsedRowsCount?: number;
+  sheetReports?: SheetParseReport[];
 }
 
 export interface UploadHistoryRecord {
   id: string;
   timestamp: string;
+  isoDate?: string;
   filesCount: number;
   fileNames: string[];
   indicatorsUpdated: string[];
   summary: string;
+  storedFiles?: StoredRepoFile[];
 }

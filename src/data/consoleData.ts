@@ -69,14 +69,14 @@ export const SECURITY_COMPANIES: Record<string, SecurityCompany> = {
   'Agencia Salinas': 'CAJAMARCA',
   'Planta y Agencia Machala': 'LIDERMAN',
   'Agencia Cuenca': 'CAJAMARCA',
-  'Agencia Loja': '593 SECURITY',
-  'Agencia Ambato': '593 SECURITY',
+  'Agencia Loja': 'CONTROLRISK',
+  'Agencia Ambato': 'CONTROLRISK',
   'Agencia Latacunga': 'CAJAMARCA',
   'Agencia Puyo': 'CAJAMARCA',
   'Agencia Manta': 'LIDERMAN',
-  'Agencia Atacames': '593 SECURITY',
-  'Agencia Quevedo': '593 SECURITY',
-  'Agencia Santo Domingo': '593 SECURITY'
+  'Agencia Atacames': 'CONTROLRISK',
+  'Agencia Quevedo': 'CONTROLRISK',
+  'Agencia Santo Domingo': 'CONTROLRISK'
 };
 
 export const EXACT_COORDINATES: Record<string, ExactLocation> = {

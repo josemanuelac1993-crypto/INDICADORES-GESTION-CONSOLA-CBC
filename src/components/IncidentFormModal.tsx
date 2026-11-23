@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { IncidentRecord, PendingUploadBatch, RegionName } from '../types/console';
+import {
+  IncidentRecord,
+  PendingUploadBatch,
+  RegionName,
+  StoredRepoFile,
+  UploadHistoryRecord
+} from '../types/console';
 import { CATEGORY_LABELS, STATUS_LABELS } from '../data/consoleData';
 import { ExcelUploaderBlock } from './ExcelUploaderBlock';
 import { X, PlusCircle, CheckCircle, FileSpreadsheet, PenLine } from 'lucide-react';
@@ -9,8 +15,15 @@ interface IncidentFormModalProps {
   initialMode?: 'manual' | 'excel';
   onClose: () => void;
   onSaveIncident: (incident: IncidentRecord) => void;
-  onApplyUploadBatch: (batch: PendingUploadBatch, fileNames: string[]) => void;
+  onApplyUploadBatch: (
+    batch: PendingUploadBatch,
+    fileNames: string[],
+    storedFiles?: StoredRepoFile[]
+  ) => void;
   agenciesByRegion: Record<RegionName, { a: string }[]>;
+  uploadHistory?: UploadHistoryRecord[];
+  repoFiles?: StoredRepoFile[];
+  auditReportsCount?: number;
 }
 
 export const IncidentFormModal: React.FC<IncidentFormModalProps> = ({
@@ -19,7 +32,10 @@ export const IncidentFormModal: React.FC<IncidentFormModalProps> = ({
   onClose,
   onSaveIncident,
   onApplyUploadBatch,
-  agenciesByRegion
+  agenciesByRegion,
+  uploadHistory = [],
+  repoFiles = [],
+  auditReportsCount = 0
 }) => {
   const [mode, setMode] = useState<'manual' | 'excel'>(initialMode);
   const [selectedAgency, setSelectedAgency] = useState('Agencia Norte GYE');
@@ -63,7 +79,7 @@ export const IncidentFormModal: React.FC<IncidentFormModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/50 backdrop-blur-xs animate-fadeIn">
-      <div className="relative w-full max-w-2xl max-h-[92vh] bg-white border border-slate-300 rounded-2xl shadow-2xl flex flex-col overflow-hidden text-slate-900">
+      <div className="relative w-full max-w-3xl max-h-[92vh] bg-white border border-slate-300 rounded-2xl shadow-2xl flex flex-col overflow-hidden text-slate-900">
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
@@ -73,7 +89,7 @@ export const IncidentFormModal: React.FC<IncidentFormModalProps> = ({
                 Bloque de Registro Operativo y Carga de Indicadores
               </h3>
               <p className="text-xs text-slate-600 font-medium">
-                Registra una incidencia puntual o sube archivos Excel para actualizar los indicadores del tablero
+                Registra una incidencia puntual o sube archivos Excel para actualizar los indicadores y archivar en REPO PLATAFORMA
               </p>
             </div>
           </div>
@@ -121,6 +137,9 @@ export const IncidentFormModal: React.FC<IncidentFormModalProps> = ({
             <ExcelUploaderBlock
               compact
               onApplyBatch={onApplyUploadBatch}
+              uploadHistory={uploadHistory}
+              repoFiles={repoFiles}
+              auditReportsCount={auditReportsCount}
               onSuccessClose={onClose}
             />
           ) : (

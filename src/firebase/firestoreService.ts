@@ -158,13 +158,75 @@ export async function saveUploadHistoryToFirestore(record: UploadHistoryRecord):
     await setDoc(ref, {
       id: record.id,
       timestamp: record.timestamp,
+      isoDate: record.isoDate || new Date().toISOString(),
       filesCount: record.filesCount,
       fileNames: JSON.stringify(record.fileNames),
       indicatorsUpdated: JSON.stringify(record.indicatorsUpdated),
       summary: record.summary,
+      storedFiles: JSON.stringify(record.storedFiles || []),
       createdAt: new Date().toISOString()
     });
   } catch (err) {
     console.warn('Error saving upload history to Firestore:', err);
+  }
+}
+
+// Subscribe to upload history records in real time
+export function subscribeToUploadHistory(
+  callback: (records: UploadHistoryRecord[]) => void
+): () => void {
+  try {
+    const q = query(collection(db, HISTORY_COL), orderBy('createdAt', 'desc'), limit(40));
+    return onSnapshot(
+      q,
+      snapshot => {
+        const records: UploadHistoryRecord[] = [];
+        snapshot.forEach(docSnap => {
+          const data = docSnap.data();
+          let fileNames: string[] = [];
+          let indicatorsUpdated: string[] = [];
+          let storedFiles: UploadHistoryRecord['storedFiles'] = [];
+          try {
+            fileNames = typeof data.fileNames === 'string' ? JSON.parse(data.fileNames) : Array.isArray(data.fileNames) ? data.fileNames : [];
+          } catch {
+            fileNames = [];
+          }
+          try {
+            indicatorsUpdated = typeof data.indicatorsUpdated === 'string'
+              ? JSON.parse(data.indicatorsUpdated)
+              : Array.isArray(data.indicatorsUpdated) ? data.indicatorsUpdated : [];
+          } catch {
+            indicatorsUpdated = [];
+          }
+          try {
+            storedFiles = typeof data.storedFiles === 'string'
+              ? JSON.parse(data.storedFiles)
+              : Array.isArray(data.storedFiles) ? data.storedFiles : [];
+          } catch {
+            storedFiles = [];
+          }
+
+          records.push({
+            id: docSnap.id,
+            timestamp: data.timestamp || '',
+            isoDate: data.isoDate || data.createdAt,
+            filesCount: Number(data.filesCount) || fileNames.length || 0,
+            fileNames,
+            indicatorsUpdated,
+            summary: data.summary || '',
+            storedFiles
+          });
+        });
+        if (records.length > 0) {
+          callback(records);
+        }
+      },
+      error => {
+        console.warn('Upload history subscription notice:', error.message);
+      }
+    );
+  } catch (err) {
+    console.warn('Error subscribing to upload history:', err);
+    return () => {};
   }
 }
