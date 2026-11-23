@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-11-16T15:27:06.234Z",
-  "summary": "Línea base Consola CCO Tesalia CBC",
+  "updatedAt": "2026-11-23T23:44:07.820Z",
+  "summary": "Novedad registrada: Agencia Norte GYE (2026-11-23)",
   "feedState": {
     "nov": {
       "2026-10-12_D": {
@@ -1452,76 +1452,386 @@
         "at": "2026-11-16T15:26:17.610Z",
         "d": "2026-11-15",
         "t": "N"
+      },
+      "2026-11-16_D": {
+        "d": "2026-11-16",
+        "t": "D",
+        "at": "2026-11-23T23:14:38.382Z",
+        "ag": {}
+      },
+      "2026-11-16_N": {
+        "d": "2026-11-16",
+        "t": "N",
+        "at": "2026-11-23T23:14:38.383Z",
+        "ag": {
+          "Agencia Sur GYE": [
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            3,
+            0,
+            0
+          ],
+          "Planta Tesalia GYE": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0
+          ],
+          "Agencia Norte GYE": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0
+          ]
+        }
+      },
+      "2026-11-17_D": {
+        "d": "2026-11-17",
+        "t": "D",
+        "at": "2026-11-23T23:14:38.384Z",
+        "ag": {}
+      },
+      "2026-11-17_N": {
+        "d": "2026-11-17",
+        "t": "N",
+        "at": "2026-11-23T23:14:38.384Z",
+        "ag": {
+          "Agencia Salinas": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            1,
+            0,
+            0
+          ],
+          "Bodega MEMX Quito": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "Agencia Norte GYE": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0
+          ],
+          "Agencia Sur GYE": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0
+          ]
+        }
+      },
+      "2026-11-18_D": {
+        "d": "2026-11-18",
+        "t": "D",
+        "at": "2026-11-23T23:14:38.385Z",
+        "ag": {}
+      },
+      "2026-11-18_N": {
+        "d": "2026-11-18",
+        "t": "N",
+        "at": "2026-11-23T23:14:38.385Z",
+        "ag": {
+          "Planta Tesalia GYE": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            1
+          ]
+        }
+      },
+      "2026-11-19_D": {
+        "d": "2026-11-19",
+        "t": "D",
+        "at": "2026-11-23T23:14:38.385Z",
+        "ag": {
+          "Agencia Quevedo": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0
+          ]
+        }
+      },
+      "2026-11-19_N": {
+        "d": "2026-11-19",
+        "t": "N",
+        "at": "2026-11-23T23:14:38.385Z",
+        "ag": {
+          "Planta Tesalia GYE": [
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            2
+          ]
+        }
+      },
+      "2026-11-20_D": {
+        "d": "2026-11-20",
+        "t": "D",
+        "at": "2026-11-23T23:14:38.385Z",
+        "ag": {
+          "Agencia Salinas": [
+            1,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0
+          ]
+        }
+      },
+      "2026-11-20_N": {
+        "d": "2026-11-20",
+        "t": "N",
+        "at": "2026-11-23T23:14:38.385Z",
+        "ag": {
+          "Agencia Norte GYE": [
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ]
+        }
+      },
+      "2026-11-21_D": {
+        "d": "2026-11-21",
+        "t": "D",
+        "at": "2026-11-23T23:14:38.386Z",
+        "ag": {}
+      },
+      "2026-11-21_N": {
+        "d": "2026-11-21",
+        "t": "N",
+        "at": "2026-11-23T23:14:38.386Z",
+        "ag": {
+          "Planta Tesalia GYE": [
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          "Agencia Norte GYE": [
+            1,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          "Agencia Sur GYE": [
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0
+          ]
+        }
+      },
+      "2026-11-22_D": {
+        "d": "2026-11-22",
+        "t": "D",
+        "at": "2026-11-23T23:14:38.386Z",
+        "ag": {
+          "Agencia Manta": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            1
+          ],
+          "Agencia Norte GYE": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            1
+          ]
+        }
+      },
+      "2026-11-22_N": {
+        "d": "2026-11-22",
+        "t": "N",
+        "at": "2026-11-23T23:14:38.386Z",
+        "ag": {
+          "Planta Machachi": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            1,
+            0,
+            0
+          ]
+        }
       }
     },
     "bl": {
+      "at": "2026-11-23T23:13:23.052Z",
       "ag": {
         "Agencia Ambato": [
-          200,
-          74
+          202,
+          78
         ],
         "Agencia Atacames": [
-          207,
-          67
+          211,
+          69
         ],
         "Agencia Cuenca": [
-          130,
-          144
+          133,
+          147
         ],
         "Agencia Ibarra": [
-          68,
-          206
+          70,
+          210
         ],
         "Agencia Latacunga": [
-          61,
-          213
+          62,
+          218
         ],
         "Agencia Loja": [
-          45,
-          229
+          46,
+          234
         ],
         "Agencia Manta": [
-          263,
+          268,
           12
         ],
         "Agencia Norte GYE": [
-          226,
-          48
+          231,
+          49
         ],
         "Agencia Puyo": [
-          33,
-          242
+          32,
+          248
         ],
         "Agencia Quevedo": [
-          85,
-          189
-        ],
-        "Agencia Quito Norte": [
-          218,
-          56
-        ],
-        "Agencia Quito Sur": [
-          216,
-          58
-        ],
-        "Agencia Salinas": [
-          82,
+          87,
           193
         ],
+        "Agencia Quito Norte": [
+          223,
+          57
+        ],
+        "Agencia Quito Sur": [
+          221,
+          59
+        ],
+        "Agencia Salinas": [
+          84,
+          196
+        ],
         "Agencia Santo Domingo": [
-          184,
-          90
+          188,
+          92
         ],
         "Agencia Sur GYE": [
-          224,
-          50
+          229,
+          51
         ],
         "Planta y Agencia Machala": [
-          88,
-          186
+          89,
+          191
         ]
       },
-      "at": "2026-11-16T15:26:51.674Z",
       "nat": [
         {
           "m": "ENE",
@@ -1565,98 +1875,98 @@
         },
         {
           "m": "NOV",
-          "pct": 52.3
+          "pct": 51.4
         }
       ]
     },
     "sp": {
+      "at": "2026-11-23T23:15:01.748Z",
       "ag": {
         "Agencia Ambato": [
-          98,
-          540
+          102,
+          550
         ],
         "Agencia Atacames": [
-          64,
-          574
+          65,
+          587
         ],
         "Agencia Cuenca": [
-          98,
-          540
+          102,
+          550
         ],
         "Agencia Ibarra": [
-          74,
-          564
+          75,
+          577
         ],
         "Agencia Latacunga": [
-          84,
-          554
+          86,
+          566
         ],
         "Agencia Loja": [
-          239,
-          399
+          244,
+          408
         ],
         "Agencia Manta": [
-          217,
-          421
+          221,
+          431
         ],
         "Agencia Norte GYE": [
-          629,
+          643,
           9
         ],
         "Agencia Puyo": [
           5,
-          633
+          647
         ],
         "Agencia Quevedo": [
-          145,
-          493
+          149,
+          503
         ],
         "Agencia Quito Norte": [
-          510,
-          128
+          520,
+          132
         ],
         "Agencia Quito Sur": [
-          487,
-          151
+          497,
+          155
         ],
         "Agencia Salinas": [
-          58,
-          580
+          60,
+          592
         ],
         "Agencia Santo Domingo": [
-          96,
-          542
+          99,
+          553
         ],
         "Agencia Sur GYE": [
-          596,
-          42
+          607,
+          45
         ],
         "Bodega MEMX Quito": [
-          489,
-          149
+          497,
+          155
         ],
         "Edificio WorQ": [
-          187,
-          451
+          191,
+          461
         ],
         "Planta Machachi": [
-          319,
-          319
+          328,
+          324
         ],
         "Planta Milagro": [
-          241,
-          397
+          245,
+          407
         ],
         "Planta Tesalia GYE": [
-          633,
+          647,
           5
         ],
         "Planta y Agencia Machala": [
-          134,
-          504
+          137,
+          515
         ]
       },
-      "at": "2026-11-16T15:26:55.378Z",
       "nat": [
         {
           "m": "ENE",
@@ -1705,27 +2015,30 @@
       ]
     },
     "dc": {
+      "at": "2026-11-23T23:15:18.541Z",
       "ag": {
         "Agencia Ambato": 156,
-        "Agencia Atacames": 324,
+        "Agencia Atacames": 340,
         "Agencia Cuenca": 0,
         "Agencia Ibarra": 4,
         "Agencia Latacunga": 35,
         "Agencia Loja": 1,
-        "Agencia Manta": 765,
-        "Agencia Norte GYE": 798,
+        "Agencia Manta": 782,
+        "Agencia Norte GYE": 836,
         "Agencia Quevedo": 20,
         "Agencia Quito Norte": 0,
         "Agencia Quito Sur": 0,
-        "Agencia Salinas": 153,
+        "Agencia Salinas": 164,
         "Agencia Santo Domingo": 263,
         "Agencia Sur GYE": 6,
         "Planta Machachi": 0,
         "Planta Milagro": 0,
         "Planta Tesalia GYE": 0,
-        "Planta y Agencia Machala": 825
+        "Planta y Agencia Machala": 825,
+        "Edificio WorQ": 0,
+        "Bodega MEMX Quito": 0,
+        "Agencia Puyo": 0
       },
-      "at": "2026-11-16T15:24:09.810Z",
       "nat": [
         {
           "m": "ENE",
@@ -1769,12 +2082,12 @@
         },
         {
           "m": "NOV",
-          "t": 119
+          "t": 201
         }
       ]
     },
     "bq": {
-      "bloq": 176,
+      "bloq": 177,
       "desb": 28,
       "mot": [
         [
@@ -1831,19 +2144,43 @@
         ],
         [
           2026,
-          88
+          89
         ]
       ],
-      "at": "2026-11-16T15:27:06.234Z"
+      "at": "2026-11-23T23:14:22.068Z"
     },
     "cam": {
-      "at": "2026-11-16T15:23:48.443Z",
-      "date": "2026-11-16",
-      "no": 2,
-      "op": 617,
-      "t": "D",
+      "at": "2026-11-23T23:14:33.643Z",
+      "date": "2026-11-22",
+      "t": "N",
+      "op": 619,
+      "no": 0,
       "sites": {
-        "Agencia Ambato": [
+        "Planta Tesalia GYE": [
+          173,
+          0
+        ],
+        "Agencia Norte GYE": [
+          41,
+          0
+        ],
+        "Agencia Sur GYE": [
+          29,
+          0
+        ],
+        "Edificio WorQ": [
+          17,
+          0
+        ],
+        "Planta Milagro": [
+          18,
+          0
+        ],
+        "Agencia Salinas": [
+          17,
+          0
+        ],
+        "Agencia Manta": [
           20,
           0
         ],
@@ -1851,36 +2188,40 @@
           20,
           0
         ],
+        "Agencia Quevedo": [
+          23,
+          0
+        ],
+        "Agencia Santo Domingo": [
+          14,
+          0
+        ],
+        "Planta y Agencia Machala": [
+          24,
+          0
+        ],
         "Agencia Cuenca": [
           18,
-          0
-        ],
-        "Agencia Ibarra": [
-          15,
-          0
-        ],
-        "Agencia Latacunga": [
-          11,
           0
         ],
         "Agencia Loja": [
           21,
           0
         ],
-        "Agencia Manta": [
-          19,
-          1
+        "Agencia Ambato": [
+          20,
+          0
         ],
-        "Agencia Norte GYE": [
-          40,
-          1
+        "Agencia Latacunga": [
+          11,
+          0
         ],
         "Agencia Puyo": [
           12,
           0
         ],
-        "Agencia Quevedo": [
-          23,
+        "Planta Machachi": [
+          62,
           0
         ],
         "Agencia Quito Norte": [
@@ -1891,46 +2232,18 @@
           24,
           0
         ],
-        "Agencia Salinas": [
-          17,
-          0
-        ],
-        "Agencia Santo Domingo": [
-          14,
-          0
-        ],
-        "Agencia Sur GYE": [
-          29,
-          0
-        ],
         "Bodega MEMX Quito": [
           14,
           0
         ],
-        "Edificio WorQ": [
-          17,
-          0
-        ],
-        "Planta Machachi": [
-          62,
-          0
-        ],
-        "Planta Milagro": [
-          18,
-          0
-        ],
-        "Planta Tesalia GYE": [
-          173,
-          0
-        ],
-        "Planta y Agencia Machala": [
-          24,
+        "Agencia Ibarra": [
+          15,
           0
         ]
       }
     },
     "camm": {
-      "at": "2026-11-16T15:23:48.443Z",
+      "at": "2026-11-23T23:14:33.643Z",
       "months": {
         "OCT": {
           "cams": 618,
@@ -1939,118 +2252,103 @@
           "pct": 99.45
         },
         "NOV": {
-          "cams": 619,
-          "n": 31,
-          "no": 6.39,
-          "pct": 98.97
+          "no": 6.52,
+          "pct": 98.95,
+          "n": 44,
+          "cams": 619
         }
       }
     },
     "vl": {
       "cur": "2026",
       "prev": "2025",
-      "p25": 7373,
-      "asof": "2026-11-16",
+      "p25": 6825,
+      "asof": "2026-11-21",
       "y": {
         "2025": {
-          "tot": 8402,
+          "tot": 8176,
           "nd": 0,
           "m": [
-            751,
-            810,
-            661,
-            713,
-            775,
-            788,
-            756,
-            739,
-            507,
-            567,
-            836,
-            499
-          ],
-          "tipo": [
-            1876,
-            1896,
-            612,
-            86,
-            193,
-            3739
-          ],
-          "ag": {
-            "Planta Tesalia GYE": 2407,
-            "Planta Milagro": 562,
-            "Agencia Manta": 524,
-            "Agencia Norte GYE": 457,
-            "Agencia Sur GYE": 395,
-            "Agencia Santo Domingo": 308,
-            "Agencia Quevedo": 249,
-            "Agencia Atacames": 197,
-            "Agencia Salinas": 117,
-            "Agencia Cuenca": 24,
-            "Planta Machachi": 21,
-            "Planta y Agencia Machala": 17,
-            "Edificio WorQ": 2
-          },
-          "multi": {
-            "GYE-SALINAS-MILAGRO": 3061,
-            "UIO-IBARRA": 2,
-            "COSTA": 23
-          },
-          "none": 36,
-          "al": 75
-        },
-        "2026": {
-          "tot": 9091,
-          "nd": 0,
-          "m": [
-            810,
-            857,
-            1137,
-            981,
-            711,
-            782,
-            990,
-            626,
-            775,
-            1064,
-            358,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
             0
           ],
           "tipo": [
-            3940,
-            3723,
-            513,
-            197,
-            237,
-            481
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "ag": {},
+          "multi": {},
+          "none": 0,
+          "al": 2
+        },
+        "2026": {
+          "tot": 7873,
+          "nd": 0,
+          "m": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "tipo": [
+            1260,
+            1968,
+            3385,
+            472,
+            236,
+            551
           ],
           "ag": {
-            "Planta Tesalia GYE": 4446,
-            "Agencia Norte GYE": 1154,
-            "Agencia Sur GYE": 944,
-            "Planta Milagro": 860,
-            "Agencia Manta": 531,
-            "Agencia Quevedo": 198,
-            "Agencia Atacames": 185,
-            "Agencia Santo Domingo": 145,
-            "Agencia Salinas": 137,
-            "Planta Machachi": 67,
-            "Planta y Agencia Machala": 18,
+            "Agencia Norte GYE": 1039,
+            "Agencia Sur GYE": 860,
+            "Planta Tesalia GYE": 3972,
+            "Planta Milagro": 787,
+            "Agencia Salinas": 130,
+            "Edificio WorQ": 0,
+            "Agencia Manta": 490,
+            "Agencia Quevedo": 197,
+            "Agencia Atacames": 166,
+            "Agencia Santo Domingo": 140,
+            "Agencia Ibarra": 0,
+            "Planta Machachi": 66,
+            "Agencia Quito Norte": 1,
+            "Agencia Quito Sur": 0,
+            "Bodega MEMX Quito": 0,
             "Agencia Ambato": 4,
-            "Agencia Loja": 2,
+            "Planta y Agencia Machala": 18,
             "Agencia Cuenca": 1,
-            "Agencia Quito Norte": 1
+            "Agencia Latacunga": 0,
+            "Agencia Puyo": 0,
+            "Agencia Loja": 2
           },
-          "multi": {
-            "GYE-SALINAS-MILAGRO": 123,
-            "UIO-IBARRA": 51
-          },
-          "none": 224,
-          "al": 108
+          "multi": {},
+          "none": 0,
+          "al": 11
         }
       },
-      "at": "2026-11-16T15:26:37.330Z"
+      "at": "2026-11-21T02:47:09.050Z"
     },
     "rev": {
       "r103gij9": {
@@ -2835,6 +3133,679 @@
       }
     }
   },
-  "customIncidents": [],
-  "uploadHistory": []
+  "customIncidents": [
+    {
+      "id": "inc_1795477446536_tcdh",
+      "a": "Agencia Norte GYE",
+      "t": 8,
+      "e": 1,
+      "d": "2026-11-23",
+      "x": "CERRAMIENTO LATERAL POSTERIOR EN MAL ESTADO DESPEGANDOSE EL SUELO",
+      "author": "Operador CCO",
+      "source": "manual"
+    },
+    {
+      "id": "xl_wk33r5",
+      "a": "Planta Tesalia GYE",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "145",
+      "author": "Byron Carrera",
+      "source": "excel"
+    },
+    {
+      "id": "xl_nx1x8z",
+      "a": "Planta Milagro",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "63",
+      "author": "Byron Carrera",
+      "source": "excel"
+    },
+    {
+      "id": "xl_mfe4ws",
+      "a": "Agencia Ibarra",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "13",
+      "author": "Israel Andrade",
+      "source": "excel"
+    },
+    {
+      "id": "xl_m1mwve",
+      "a": "Agencia Atacames",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "13",
+      "author": "Tyrone Intriago",
+      "source": "excel"
+    },
+    {
+      "id": "xl_lozlgj",
+      "a": "Tesalia CBC (Nacional)",
+      "t": 2,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "Cámaras CCTV Operativas",
+      "author": "Carga Excel (Consola_CCO_Tesalia_CBC_2026-11-21.xlsx)",
+      "source": "excel"
+    },
+    {
+      "id": "xl_imaubt",
+      "a": "Agencia Puyo",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "5",
+      "author": "Rodolfo Carrera",
+      "source": "excel"
+    },
+    {
+      "id": "xl_df12gf",
+      "a": "Tesalia CBC (Nacional)",
+      "t": 4,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "Ingreso de Blindados",
+      "author": "Carga Excel (Consola_CCO_Tesalia_CBC_2026-11-21.xlsx)",
+      "source": "excel"
+    },
+    {
+      "id": "xl_deh6ng",
+      "a": "Agencia Cuenca",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "6",
+      "author": "Rodolfo Carrera",
+      "source": "excel"
+    },
+    {
+      "id": "xl_d6y4jx",
+      "a": "Agencia Norte GYE",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "216",
+      "author": "Byron Carrera",
+      "source": "excel"
+    },
+    {
+      "id": "xl_at0s69",
+      "a": "Agencia Sur GYE",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "146",
+      "author": "Byron Carrera",
+      "source": "excel"
+    },
+    {
+      "id": "xl_8m7m1",
+      "a": "Planta y Agencia Machala",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "11",
+      "author": "Rodolfo Carrera",
+      "source": "excel"
+    },
+    {
+      "id": "xl_1ujztxd",
+      "a": "Agencia Loja",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "4",
+      "author": "Rodolfo Carrera",
+      "source": "excel"
+    },
+    {
+      "id": "xl_1qn0ow9",
+      "a": "Agencia Quevedo",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "18",
+      "author": "Tyrone Intriago",
+      "source": "excel"
+    },
+    {
+      "id": "xl_1q3aqj2",
+      "a": "Tesalia CBC (Nacional)",
+      "t": 0,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "Validaciones de Seguridad",
+      "author": "Carga Excel (Consola_CCO_Tesalia_CBC_2026-11-21.xlsx)",
+      "source": "excel"
+    },
+    {
+      "id": "xl_1lclm3h",
+      "a": "Bodega MEMX Quito",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "3",
+      "author": "Israel Andrade",
+      "source": "excel"
+    },
+    {
+      "id": "xl_1kcuogv",
+      "a": "Agencia Ambato",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "13",
+      "author": "Rodolfo Carrera",
+      "source": "excel"
+    },
+    {
+      "id": "xl_1gykojj",
+      "a": "Tesalia CBC (Nacional)",
+      "t": 12,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "Decomisos Incautados",
+      "author": "Carga Excel (Consola_CCO_Tesalia_CBC_2026-11-21.xlsx)",
+      "source": "excel"
+    },
+    {
+      "id": "xl_1gsteuh",
+      "a": "Agencia Quito Sur",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "6",
+      "author": "Israel Andrade",
+      "source": "excel"
+    },
+    {
+      "id": "xl_1g6p0fr",
+      "a": "Agencia Quito Norte",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "6",
+      "author": "Israel Andrade",
+      "source": "excel"
+    },
+    {
+      "id": "xl_1eb8ahr",
+      "a": "Tesalia CBC (Nacional)",
+      "t": 4,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "Personal Bloqueado",
+      "author": "Carga Excel (Consola_CCO_Tesalia_CBC_2026-11-21.xlsx)",
+      "source": "excel"
+    },
+    {
+      "id": "xl_19ryuu",
+      "a": "Edificio WorQ",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "2",
+      "author": "Byron Carrera",
+      "source": "excel"
+    },
+    {
+      "id": "xl_17q03pd",
+      "a": "Agencia Manta",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "27",
+      "author": "Tyrone Intriago",
+      "source": "excel"
+    },
+    {
+      "id": "xl_15e9nnx",
+      "a": "Agencia Latacunga",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "6",
+      "author": "Rodolfo Carrera",
+      "source": "excel"
+    },
+    {
+      "id": "xl_14beyk6",
+      "a": "Agencia Salinas",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "31",
+      "author": "Byron Carrera",
+      "source": "excel"
+    },
+    {
+      "id": "xl_140ru62",
+      "a": "Tesalia CBC (Nacional)",
+      "t": 4,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "Supervisión de Turnos",
+      "author": "Carga Excel (Consola_CCO_Tesalia_CBC_2026-11-21.xlsx)",
+      "source": "excel"
+    },
+    {
+      "id": "xl_13z5esw",
+      "a": "Planta Machachi",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "12",
+      "author": "Israel Andrade",
+      "source": "excel"
+    },
+    {
+      "id": "xl_12tgb77",
+      "a": "Tesalia CBC (Nacional)",
+      "t": 2,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "Auditorías de Video (CCTV)",
+      "author": "Carga Excel (Consola_CCO_Tesalia_CBC_2026-11-21.xlsx)",
+      "source": "excel"
+    },
+    {
+      "id": "xl_116u6pc",
+      "a": "Agencia Santo Domingo",
+      "t": 5,
+      "e": 0,
+      "d": "2026-11-21",
+      "x": "7",
+      "author": "Tyrone Intriago",
+      "source": "excel"
+    }
+  ],
+  "uploadHistory": [
+    {
+      "id": "up_1795475718542",
+      "timestamp": "2026-11-23 18:15",
+      "isoDate": "2026-11-23T23:15:18.541Z",
+      "filesCount": 1,
+      "fileNames": [
+        "CONTROL DE DECOMISOS 2026 (1).xlsx"
+      ],
+      "indicatorsUpdated": [
+        "decomisos"
+      ],
+      "summary": "decomisos (CONTROL DE DECOMISOS 2026 (1).xlsx)",
+      "storedFiles": [
+        {
+          "originalName": "CONTROL DE DECOMISOS 2026 (1).xlsx",
+          "storedName": "20261123_181518_dec4__CONTROL_DE_DECOMISOS_2026_1.xlsx",
+          "size": 144859,
+          "uploadedAt": "2026-11-23T23:15:18.541Z",
+          "url": "/api/github-sync?download=20261123_181518_dec4__CONTROL_DE_DECOMISOS_2026_1.xlsx"
+        }
+      ]
+    },
+    {
+      "id": "up_1795475701749",
+      "timestamp": "2026-11-23 18:15",
+      "isoDate": "2026-11-23T23:15:01.748Z",
+      "filesCount": 1,
+      "fileNames": [
+        "CONTROL DE SUPERVISION 2026 (1).xlsx"
+      ],
+      "indicatorsUpdated": [
+        "supervisión"
+      ],
+      "summary": "supervisión (CONTROL DE SUPERVISION 2026 (1).xlsx)",
+      "storedFiles": [
+        {
+          "originalName": "CONTROL DE SUPERVISION 2026 (1).xlsx",
+          "storedName": "20261123_181501_d509__CONTROL_DE_SUPERVISION_2026_1.xlsx",
+          "size": 3438521,
+          "uploadedAt": "2026-11-23T23:15:01.748Z",
+          "url": "/api/github-sync?download=20261123_181501_d509__CONTROL_DE_SUPERVISION_2026_1.xlsx"
+        }
+      ]
+    },
+    {
+      "id": "up_1795475686348",
+      "timestamp": "2026-11-23 18:14",
+      "isoDate": "2026-11-23T23:14:46.345Z",
+      "filesCount": 1,
+      "fileNames": [
+        "REPORTES DE NOVEDADES DEL 16 AL 22 DE NOVIEMBRE DEL 2026..xlsx"
+      ],
+      "indicatorsUpdated": [
+        "novedades 14 fechas/turnos"
+      ],
+      "summary": "novedades 14 fechas/turnos (REPORTES DE NOVEDADES DEL 16 AL 22 DE NOVIEMBRE DEL 2026..xlsx)",
+      "storedFiles": [
+        {
+          "originalName": "REPORTES DE NOVEDADES DEL 16 AL 22 DE NOVIEMBRE DEL 2026..xlsx",
+          "storedName": "20261123_181446_f5b4__REPORTES_DE_NOVEDADES_DEL_16_AL_22_DE_NOVIEMBRE_DEL_2026.xlsx",
+          "size": 7196525,
+          "uploadedAt": "2026-11-23T23:14:46.345Z",
+          "url": "/api/github-sync?download=20261123_181446_f5b4__REPORTES_DE_NOVEDADES_DEL_16_AL_22_DE_NOVIEMBRE_DEL_2026.xlsx"
+        }
+      ]
+    },
+    {
+      "id": "up_1795475673644",
+      "timestamp": "2026-11-23 18:14",
+      "isoDate": "2026-11-23T23:14:33.643Z",
+      "filesCount": 1,
+      "fileNames": [
+        "Control de Camaras NOVIEMBRE 2026. (1).xlsx"
+      ],
+      "indicatorsUpdated": [
+        "cámaras"
+      ],
+      "summary": "cámaras (Control de Camaras NOVIEMBRE 2026. (1).xlsx)",
+      "storedFiles": [
+        {
+          "originalName": "Control de Camaras NOVIEMBRE 2026. (1).xlsx",
+          "storedName": "20261123_181433_c477__Control_de_Camaras_NOVIEMBRE_2026._1.xlsx",
+          "size": 536348,
+          "uploadedAt": "2026-11-23T23:14:33.643Z",
+          "url": "/api/github-sync?download=20261123_181433_c477__Control_de_Camaras_NOVIEMBRE_2026._1.xlsx"
+        }
+      ]
+    },
+    {
+      "id": "up_1795475662070",
+      "timestamp": "2026-11-23 18:14",
+      "isoDate": "2026-11-23T23:14:22.068Z",
+      "filesCount": 1,
+      "fileNames": [
+        "BLOQUEO DE PERSONAL ACTUALIZADO.xlsx"
+      ],
+      "indicatorsUpdated": [
+        "bloqueo"
+      ],
+      "summary": "bloqueo (BLOQUEO DE PERSONAL ACTUALIZADO.xlsx)",
+      "storedFiles": [
+        {
+          "originalName": "BLOQUEO DE PERSONAL ACTUALIZADO.xlsx",
+          "storedName": "20261123_181422_c1f6__BLOQUEO_DE_PERSONAL_ACTUALIZADO.xlsx",
+          "size": 32254,
+          "uploadedAt": "2026-11-23T23:14:22.064Z",
+          "url": "/api/github-sync?download=20261123_181422_c1f6__BLOQUEO_DE_PERSONAL_ACTUALIZADO.xlsx"
+        }
+      ]
+    },
+    {
+      "id": "up_1795475603052",
+      "timestamp": "2026-11-23 18:13",
+      "isoDate": "2026-11-23T23:13:23.052Z",
+      "filesCount": 1,
+      "fileNames": [
+        "CONTROL DE BLINDADOS 2026 (1).xlsx"
+      ],
+      "indicatorsUpdated": [
+        "blindados"
+      ],
+      "summary": "blindados (CONTROL DE BLINDADOS 2026 (1).xlsx)",
+      "storedFiles": [
+        {
+          "originalName": "CONTROL DE BLINDADOS 2026 (1).xlsx",
+          "storedName": "20261123_181323_3a5e__CONTROL_DE_BLINDADOS_2026_1.xlsx",
+          "size": 405886,
+          "uploadedAt": "2026-11-23T23:13:23.051Z",
+          "url": "/api/github-sync?download=20261123_181323_3a5e__CONTROL_DE_BLINDADOS_2026_1.xlsx"
+        }
+      ]
+    },
+    {
+      "id": "up_1795468944853",
+      "timestamp": "2026-11-23 16:22",
+      "isoDate": "2026-11-23T21:22:24.852Z",
+      "filesCount": 1,
+      "fileNames": [
+        "BLOQUEO DE PERSONAL ACTUALIZADO.xlsx"
+      ],
+      "indicatorsUpdated": [
+        "bloqueo"
+      ],
+      "summary": "bloqueo (BLOQUEO DE PERSONAL ACTUALIZADO.xlsx)",
+      "storedFiles": []
+    },
+    {
+      "id": "up_1795468805106",
+      "timestamp": "2026-11-23 16:20",
+      "isoDate": "2026-11-23T21:20:05.105Z",
+      "filesCount": 1,
+      "fileNames": [
+        "CONTROL DE BLINDADOS 2026 (1).xlsx"
+      ],
+      "indicatorsUpdated": [
+        "blindados"
+      ],
+      "summary": "blindados (CONTROL DE BLINDADOS 2026 (1).xlsx)",
+      "storedFiles": []
+    },
+    {
+      "id": "up_1795468782994",
+      "timestamp": "2026-11-23 16:19",
+      "isoDate": "2026-11-23T21:19:42.993Z",
+      "filesCount": 1,
+      "fileNames": [
+        "CONTROL DE DECOMISOS 2026 (1).xlsx"
+      ],
+      "indicatorsUpdated": [
+        "decomisos"
+      ],
+      "summary": "decomisos (CONTROL DE DECOMISOS 2026 (1).xlsx)",
+      "storedFiles": []
+    },
+    {
+      "id": "up_1795468738828",
+      "timestamp": "2026-11-23 16:18",
+      "isoDate": "2026-11-23T21:18:58.827Z",
+      "filesCount": 1,
+      "fileNames": [
+        "CONTROL DE SUPERVISION 2026 (1).xlsx"
+      ],
+      "indicatorsUpdated": [
+        "supervisión"
+      ],
+      "summary": "supervisión (CONTROL DE SUPERVISION 2026 (1).xlsx)",
+      "storedFiles": []
+    },
+    {
+      "id": "up_1795468722868",
+      "timestamp": "2026-11-23 16:18",
+      "isoDate": "2026-11-23T21:18:42.867Z",
+      "filesCount": 1,
+      "fileNames": [
+        "Control de Camaras NOVIEMBRE 2026. (1).xlsx"
+      ],
+      "indicatorsUpdated": [
+        "cámaras"
+      ],
+      "summary": "cámaras (Control de Camaras NOVIEMBRE 2026. (1).xlsx)",
+      "storedFiles": []
+    },
+    {
+      "id": "up_1795468709389",
+      "timestamp": "2026-11-23 16:18",
+      "isoDate": "2026-11-23T21:18:29.389Z",
+      "filesCount": 1,
+      "fileNames": [
+        "REPORTES DE NOVEDADES DEL 16 AL 22 DE NOVIEMBRE DEL 2026..xlsx"
+      ],
+      "indicatorsUpdated": [
+        "novedades 14 fechas/turnos"
+      ],
+      "summary": "novedades 14 fechas/turnos (REPORTES DE NOVEDADES DEL 16 AL 22 DE NOVIEMBRE DEL 2026..xlsx)",
+      "storedFiles": []
+    },
+    {
+      "id": "up_1795468487905",
+      "timestamp": "2026-11-23 16:14",
+      "isoDate": "2026-11-23T21:14:47.905Z",
+      "filesCount": 1,
+      "fileNames": [
+        "REPORTES DE NOVEDADES DEL 16 AL 22 DE NOVIEMBRE DEL 2026..xlsx"
+      ],
+      "indicatorsUpdated": [
+        "novedades 14 fechas/turnos"
+      ],
+      "summary": "novedades 14 fechas/turnos (REPORTES DE NOVEDADES DEL 16 AL 22 DE NOVIEMBRE DEL 2026..xlsx)",
+      "storedFiles": [
+        {
+          "originalName": "REPORTES DE NOVEDADES DEL 16 AL 22 DE NOVIEMBRE DEL 2026..xlsx",
+          "storedName": "20261123_211447_725d__REPORTES_DE_NOVEDADES_DEL_16_AL_22_DE_NOVIEMBRE_DEL_2026.xlsx",
+          "size": 7196525,
+          "uploadedAt": "2026-11-23T21:14:47.320Z",
+          "url": "/api/repo/download/20261123_211447_725d__REPORTES_DE_NOVEDADES_DEL_16_AL_22_DE_NOVIEMBRE_DEL_2026.xlsx"
+        }
+      ]
+    },
+    {
+      "id": "up_1795463010827",
+      "timestamp": "2026-11-23 14:43",
+      "isoDate": "2026-11-23T19:43:30.827Z",
+      "filesCount": 1,
+      "fileNames": [
+        "CONTROL DE SUPERVISION 2026 (1).xlsx"
+      ],
+      "indicatorsUpdated": [
+        "supervisión"
+      ],
+      "summary": "supervisión (CONTROL DE SUPERVISION 2026 (1).xlsx)",
+      "storedFiles": [
+        {
+          "originalName": "CONTROL DE SUPERVISION 2026 (1).xlsx",
+          "storedName": "20261123_194331_d549__CONTROL_DE_SUPERVISION_2026_1.xlsx",
+          "size": 3438521,
+          "uploadedAt": "2026-11-23T19:43:31.498Z",
+          "url": "/api/repo/download/20261123_194331_d549__CONTROL_DE_SUPERVISION_2026_1.xlsx"
+        }
+      ]
+    },
+    {
+      "id": "up_1795462987465",
+      "timestamp": "2026-11-23 14:43",
+      "isoDate": "2026-11-23T19:43:07.464Z",
+      "filesCount": 1,
+      "fileNames": [
+        "CONTROL DE DECOMISOS 2026 (1).xlsx"
+      ],
+      "indicatorsUpdated": [
+        "decomisos"
+      ],
+      "summary": "decomisos (CONTROL DE DECOMISOS 2026 (1).xlsx)",
+      "storedFiles": [
+        {
+          "originalName": "CONTROL DE DECOMISOS 2026 (1).xlsx",
+          "storedName": "20261123_194308_c357__CONTROL_DE_DECOMISOS_2026_1.xlsx",
+          "size": 144859,
+          "uploadedAt": "2026-11-23T19:43:08.153Z",
+          "url": "/api/repo/download/20261123_194308_c357__CONTROL_DE_DECOMISOS_2026_1.xlsx"
+        }
+      ]
+    },
+    {
+      "id": "up_1795462959418",
+      "timestamp": "2026-11-23 14:42",
+      "isoDate": "2026-11-23T19:42:39.417Z",
+      "filesCount": 1,
+      "fileNames": [
+        "Control de Camaras NOVIEMBRE 2026. (1).xlsx"
+      ],
+      "indicatorsUpdated": [
+        "cámaras"
+      ],
+      "summary": "cámaras (Control de Camaras NOVIEMBRE 2026. (1).xlsx)",
+      "storedFiles": [
+        {
+          "originalName": "Control de Camaras NOVIEMBRE 2026. (1).xlsx",
+          "storedName": "20261123_194240_159b__Control_de_Camaras_NOVIEMBRE_2026._1.xlsx",
+          "size": 536348,
+          "uploadedAt": "2026-11-23T19:42:40.104Z",
+          "url": "/api/repo/download/20261123_194240_159b__Control_de_Camaras_NOVIEMBRE_2026._1.xlsx"
+        }
+      ]
+    },
+    {
+      "id": "up_1795462911337",
+      "timestamp": "2026-11-23 14:41",
+      "isoDate": "2026-11-23T19:41:51.337Z",
+      "filesCount": 1,
+      "fileNames": [
+        "REPORTES DE NOVEDADES DEL 16 AL 22 DE NOVIEMBRE DEL 2026..xlsx"
+      ],
+      "indicatorsUpdated": [
+        "novedades 14 fechas/turnos"
+      ],
+      "summary": "novedades 14 fechas/turnos (REPORTES DE NOVEDADES DEL 16 AL 22 DE NOVIEMBRE DEL 2026..xlsx)",
+      "storedFiles": [
+        {
+          "originalName": "REPORTES DE NOVEDADES DEL 16 AL 22 DE NOVIEMBRE DEL 2026..xlsx",
+          "storedName": "20261123_194151_4b52__REPORTES_DE_NOVEDADES_DEL_16_AL_22_DE_NOVIEMBRE_DEL_2026.xlsx",
+          "size": 7196525,
+          "uploadedAt": "2026-11-23T19:41:52.026Z",
+          "url": "/api/repo/download/20261123_194151_4b52__REPORTES_DE_NOVEDADES_DEL_16_AL_22_DE_NOVIEMBRE_DEL_2026.xlsx"
+        }
+      ]
+    },
+    {
+      "id": "up_1795462783488",
+      "timestamp": "2026-11-23 14:39",
+      "isoDate": "2026-11-23T19:39:43.488Z",
+      "filesCount": 1,
+      "fileNames": [
+        "CONTROL DE BLINDADOS 2026 (1).xlsx"
+      ],
+      "indicatorsUpdated": [
+        "blindados"
+      ],
+      "summary": "blindados (CONTROL DE BLINDADOS 2026 (1).xlsx)",
+      "storedFiles": [
+        {
+          "originalName": "CONTROL DE BLINDADOS 2026 (1).xlsx",
+          "storedName": "20261123_193944_b1fc__CONTROL_DE_BLINDADOS_2026_1.xlsx",
+          "size": 405886,
+          "uploadedAt": "2026-11-23T19:39:44.178Z",
+          "url": "/api/repo/download/20261123_193944_b1fc__CONTROL_DE_BLINDADOS_2026_1.xlsx"
+        }
+      ]
+    },
+    {
+      "id": "up_1795229229051",
+      "timestamp": "20/11/2026, 09:47 p. m.",
+      "isoDate": "2026-11-21T02:47:09.057Z",
+      "filesCount": 1,
+      "fileNames": [
+        "Consola_CCO_Tesalia_CBC_2026-11-21.xlsx"
+      ],
+      "indicatorsUpdated": [
+        "Cámaras CCTV",
+        "Supervisión de Turnos",
+        "Ingreso de Blindados",
+        "Decomisos",
+        "Validaciones",
+        "Novedades (28 únicas integradas)"
+      ],
+      "summary": "Cámaras CCTV, Supervisión de Turnos, Ingreso de Blindados, Decomisos, Validaciones, Novedades (28 únicas integradas) (Consola_CCO_Tesalia_CBC_2026-11-21.xlsx)",
+      "storedFiles": []
+    },
+    {
+      "id": "up_1793910349394",
+      "timestamp": "05/11/2026, 03:25 p. m.",
+      "isoDate": "2026-11-05T20:25:49.405Z",
+      "filesCount": 1,
+      "fileNames": [
+        "REPORTES DE NOVEDADES DEL 26 DE OCTUBRE AL 01 DE NOVIEMBRE DEL 2026.xlsx"
+      ],
+      "indicatorsUpdated": [
+        "Novedades por Turno"
+      ],
+      "summary": "Novedades por Turno (REPORTES DE NOVEDADES DEL 26 DE OCTUBRE AL 01 DE NOVIEMBRE DEL 2026.xlsx)",
+      "storedFiles": []
+    }
+  ]
 }
