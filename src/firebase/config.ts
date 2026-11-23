@@ -12,14 +12,15 @@ const dbId =
 export const db = dbId ? getFirestore(app, dbId) : getFirestore(app);
 
 // Connection test on boot
-export async function testFirestoreConnection(): Promise<boolean> {
+export async function testFirestoreConnection(): Promise<{ ok: boolean; error?: string }> {
   try {
     await getDocFromServer(doc(db, 'operationalFeed', 'ping'));
-    return true;
+    return { ok: true };
   } catch (error: any) {
-    if (error?.message?.includes('the client is offline')) {
+    const msg = error instanceof Error ? error.message : String(error);
+    if (msg.includes('the client is offline')) {
       console.warn('Firestore offline / check configuration');
     }
-    return false;
+    return { ok: false, error: msg };
   }
 }

@@ -12,6 +12,8 @@ interface HeaderProps {
   isRefreshingWeather: boolean;
   onSyncVercel: () => void;
   isSyncingVercel: boolean;
+  cloudSyncStatus?: 'syncing' | 'synced' | 'error';
+  cloudSyncTitle?: string;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -24,7 +26,9 @@ export const Header: React.FC<HeaderProps> = ({
   onRefreshWeather,
   isRefreshingWeather,
   onSyncVercel,
-  isSyncingVercel
+  isSyncingVercel,
+  cloudSyncStatus = 'syncing',
+  cloudSyncTitle
 }) => {
   const [currentTime, setCurrentTime] = useState<string>('');
   const [currentDate, setCurrentDate] = useState<string>('');
@@ -55,6 +59,13 @@ export const Header: React.FC<HeaderProps> = ({
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  const syncDotClass =
+    cloudSyncStatus === 'synced'
+      ? 'bg-emerald-500'
+      : cloudSyncStatus === 'error'
+      ? 'bg-rose-500'
+      : 'bg-amber-500 animate-pulse';
 
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-300 shadow-xs px-4 sm:px-6 py-3.5 transition-colors">
@@ -122,13 +133,14 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="hidden sm:inline">Clima</span>
           </button>
 
-          {/* Sync / Update from Vercel & GitHub Button */}
+          {/* Sync / Update from Cloud, GitHub & Vercel Button */}
           <button
             onClick={onSyncVercel}
             disabled={isSyncingVercel}
-            title="Sincronizar con el repositorio y despliegue de Vercel"
+            title={cloudSyncTitle || 'Sincronizar datos en línea desde Firestore, GitHub y Vercel'}
             className="flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-blue-300 bg-blue-50 text-blue-900 hover:bg-blue-100 disabled:opacity-60 transition-colors"
           >
+            <span className={`w-2 h-2 rounded-full shrink-0 ${syncDotClass}`} />
             <RotateCw className={`w-3.5 h-3.5 text-blue-700 ${isSyncingVercel ? 'animate-spin' : ''}`} />
             <span className="hidden sm:inline">{isSyncingVercel ? 'Actualizando...' : 'Actualizar'}</span>
           </button>

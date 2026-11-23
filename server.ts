@@ -6,12 +6,14 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import dotenv from 'dotenv';
 import { createServer as createViteServer } from 'vite';
+import githubSyncHandler from './api/github-sync';
 
 dotenv.config();
 
 const PORT = Number(process.env.PORT || 3000);
 const ROOT_DIR = process.cwd();
 const REPO_DIR = path.resolve(ROOT_DIR, 'REPO PLATAFORMA');
+const LIVE_STATE_FILE = path.resolve(ROOT_DIR, 'public/data/live-state.json');
 const DIST_DIR = path.resolve(ROOT_DIR, 'dist');
 const MAX_FILES_PER_BATCH = 25;
 const MAX_FILE_BYTES = 35 * 1024 * 1024; // 35 MB per file
@@ -201,12 +203,34 @@ async function startServer() {
     }
   });
 
-  // List stored Excel/Word files inside REPO PLATAFORMA
+  // Unified GitHub synchronization route (reads live snapshot & commits changes + files atomically)
+  app.all('/api/github-sync', async (req: Request, res: Response) => {
+    if (req.method === 'POST' && req.body && typeof req.body === 'object' && req.body.feedState) {
+      try {
+        const updatedAt = typeof req.body.updatedAt === 'string' ? req.body.updatedAt : new Date().toISOString();
+        const localSnapshot = {
+          version: 1,
+          updatedAt,
+          summary: typeof req.body.summary === 'string' ? req.body.summary.slice(0, 300) : 'Actualización Consola CCO',
+          feedState: req.body.feedState,
+          customIncidents: Array.isArray(req.body.customIncidents) ? req.body.customIncidents.slice(0, 1000) : [],
+          uploadHistory: Array.isArray(req.body.uploadHistory) ? req.body.uploadHistory.slice(0, 50) : []
+        };
+        await fsp.mkdir(path.dirname(LIVE_STATE_FILE), { recursive: true });
+        await fsp.writeFile(LIVE_STATE_FILE, JSON.stringify(localSnapshot, null, 2), 'utf8');
+      } catch (localErr) {
+        console.warn('No se pudo escribir public/data/live-state.json local:', localErr);
+      }
+    }
+    await githubSyncHandler(req, res);
+  });
+
+  // List stored Excel/Word files inside REPO PLATAFORMA (local + GitHub repo merge)
   app.get('/api/repo/files', async (_req: Request, res: Response) => {
     try {
       await fsp.mkdir(REPO_DIR, { recursive: true });
       const entries = await fsp.readdir(REPO_DIR, { withFileTypes: true });
-      const results: StoredFileMeta[] = [];
+      const map = new Map<string, StoredFileMeta>();
 
       for (const entry of entries) {
         if (!entry.isFile() || entry.name.startsWith('.')) continue;
@@ -215,7 +239,7 @@ async function startServer() {
         const stats = await fsp.stat(safePath);
         const origIdx = entry.name.indexOf('__');
         const originalName = origIdx >= 0 ? entry.name.slice(origIdx + 2) : entry.name;
-        results.push({
+        map.set(entry.name, {
           originalName,
           storedName: entry.name,
           size: stats.size,
@@ -224,7 +248,43 @@ async function startServer() {
         });
       }
 
-      results.sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt));
+      // Also include files archived in GitHub REPO PLATAFORMA
+      try {
+        const ghToken = String(process.env.GITHUB_TOKEN || '').trim();
+        const ghBranch = String(process.env.GITHUB_BRANCH || 'main').trim() || 'main';
+        const ghRes = await fetch(
+          `https://api.github.com/repos/josemanuelac1993-crypto/INDICADORES-GESTION-CONSOLA-CBC/contents/${encodeURIComponent('REPO PLATAFORMA')}?ref=${encodeURIComponent(ghBranch)}`,
+          {
+            headers: {
+              'User-Agent': 'CCO-Tesalia-Sync',
+              Accept: 'application/vnd.github+json',
+              ...(ghToken ? { Authorization: `Bearer ${ghToken}` } : {})
+            }
+          }
+        );
+        if (ghRes.ok) {
+          const ghEntries = (await ghRes.json().catch(() => [])) as any[];
+          if (Array.isArray(ghEntries)) {
+            for (const item of ghEntries) {
+              if (item?.type !== 'file' || !item?.name || map.has(item.name)) continue;
+              if (!resolveSafeRepoPath(item.name)) continue;
+              const origIdx = item.name.indexOf('__');
+              const originalName = origIdx >= 0 ? item.name.slice(origIdx + 2) : item.name;
+              map.set(item.name, {
+                originalName,
+                storedName: item.name,
+                size: Number(item.size) || 0,
+                uploadedAt: '',
+                url: `/api/github-sync?download=${encodeURIComponent(item.name)}`
+              });
+            }
+          }
+        }
+      } catch {
+        // Ignore GitHub listing errors when offline
+      }
+
+      const results = Array.from(map.values()).sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt));
       res.json({ ok: true, files: results });
     } catch (err) {
       console.error('Error listing REPO PLATAFORMA files:', err);
@@ -299,7 +359,7 @@ async function startServer() {
     }
   });
 
-  // Download stored file from REPO PLATAFORMA
+  // Download stored file from REPO PLATAFORMA (local disk first, then GitHub fallback)
   app.get('/api/repo/download/:fileName', async (req: Request, res: Response) => {
     try {
       const rawParam = Array.isArray(req.params.fileName) ? req.params.fileName[0] : req.params.fileName;
@@ -309,16 +369,16 @@ async function startServer() {
         return;
       }
 
-      let stats: fs.Stats;
+      let stats: fs.Stats | null = null;
       try {
         stats = await fsp.stat(safePath);
       } catch {
-        res.status(404).json({ ok: false, error: 'Archivo no encontrado en REPO PLATAFORMA.' });
-        return;
+        stats = null;
       }
 
-      if (!stats.isFile()) {
-        res.status(404).json({ ok: false, error: 'Recurso no disponible.' });
+      if (!stats || !stats.isFile()) {
+        req.url = `/api/github-sync?download=${encodeURIComponent(path.basename(safePath))}`;
+        await githubSyncHandler(req, res);
         return;
       }
 

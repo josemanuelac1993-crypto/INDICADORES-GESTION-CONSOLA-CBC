@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   IncidentRecord,
   PendingUploadBatch,
+  PendingUploadFilePayload,
   RegionName,
   StoredRepoFile,
   UploadHistoryRecord
@@ -18,7 +19,8 @@ interface IncidentFormModalProps {
   onApplyUploadBatch: (
     batch: PendingUploadBatch,
     fileNames: string[],
-    storedFiles?: StoredRepoFile[]
+    storedFiles?: StoredRepoFile[],
+    rawFilePayloads?: PendingUploadFilePayload[]
   ) => void;
   agenciesByRegion: Record<RegionName, { a: string }[]>;
   uploadHistory?: UploadHistoryRecord[];

@@ -1,5 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { PendingUploadBatch, StoredRepoFile, UploadHistoryRecord } from '../types/console';
+import {
+  PendingUploadBatch,
+  PendingUploadFilePayload,
+  StoredRepoFile,
+  UploadHistoryRecord
+} from '../types/console';
 import { ALL_AGENCY_NAMES, downloadTemplateExcel, processUploadedFiles } from '../utils/excelParser';
 import { CATEGORY_LABELS } from '../data/consoleData';
 import { formatNumber } from '../utils/dataUtils';
@@ -29,7 +34,8 @@ interface ExcelUploaderBlockProps {
   onApplyBatch: (
     batch: PendingUploadBatch,
     fileNames: string[],
-    storedFiles?: StoredRepoFile[]
+    storedFiles?: StoredRepoFile[],
+    rawFilePayloads?: PendingUploadFilePayload[]
   ) => void;
   uploadHistory?: UploadHistoryRecord[];
   repoFiles?: StoredRepoFile[];
@@ -55,6 +61,35 @@ function formatBytes(bytes: number): string {
   if (!bytes || bytes < 1024) return `${bytes || 0} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
+
+function buildClientStoredName(originalName: string): string {
+  const clean = originalName.split(/[\\/]/).pop() || 'archivo_cco.xlsx';
+  const dotIdx = clean.lastIndexOf('.');
+  const ext = dotIdx >= 0 ? clean.slice(dotIdx).toLowerCase() : '.xlsx';
+  const stem = dotIdx >= 0 ? clean.slice(0, dotIdx) : clean;
+  const safeBase =
+    stem
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-zA-Z0-9._-]+/g, '_')
+      .replace(/\.{2,}/g, '.')
+      .replace(/^[_.-]+|[_.-]+$/g, '')
+      .slice(0, 90) || 'archivo_cco';
+  const now = new Date();
+  const stamp = [
+    now.getFullYear(),
+    String(now.getMonth() + 1).padStart(2, '0'),
+    String(now.getDate()).padStart(2, '0'),
+    '_',
+    String(now.getHours()).padStart(2, '0'),
+    String(now.getMinutes()).padStart(2, '0'),
+    String(now.getSeconds()).padStart(2, '0')
+  ].join('');
+  const rand = Math.floor(Math.random() * 0xffff)
+    .toString(16)
+    .padStart(4, '0');
+  return `${stamp}_${rand}__${safeBase}${ext}`;
 }
 
 export const ExcelUploaderBlock: React.FC<ExcelUploaderBlockProps> = ({
@@ -94,15 +129,27 @@ export const ExcelUploaderBlock: React.FC<ExcelUploaderBlockProps> = ({
   useEffect(() => {
     const fetchRepoList = async () => {
       try {
-        const res = await fetch('/api/repo/files');
+        const res = await fetch('/api/repo/files', { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
           if (Array.isArray(data.files)) {
             setLocalRepoFiles(data.files);
+            return;
           }
         }
       } catch {
-        // Ignore if running in static preview without backend
+        // Ignore and try GitHub endpoint fallback
+      }
+      try {
+        const ghRes = await fetch('/api/github-sync', { cache: 'no-store' });
+        if (ghRes.ok) {
+          const ghData = await ghRes.json();
+          if (Array.isArray(ghData.repoFiles)) {
+            setLocalRepoFiles(ghData.repoFiles);
+          }
+        }
+      } catch {
+        // Ignore if running completely offline
       }
     };
     fetchRepoList();
@@ -333,39 +380,83 @@ export const ExcelUploaderBlock: React.FC<ExcelUploaderBlockProps> = ({
     setIsSavingRepo(true);
     setRepoWarning(null);
     let storedFiles: StoredRepoFile[] = [];
+    const rawFilePayloads: PendingUploadFilePayload[] = [];
+    const MAX_GITHUB_ATTACH_BYTES = 2_800_000;
 
     if (pendingRawFiles.length > 0) {
       try {
         const uploadable = pendingRawFiles.filter(f => /\.(xlsx|xlsm|xls|csv|docx)$/i.test(f.name));
         if (uploadable.length > 0) {
-          const payload = await Promise.all(
+          const encodedList = await Promise.all(
             uploadable.map(async f => ({
+              file: f,
               name: f.name,
+              size: f.size,
               dataBase64: await fileToBase64(f)
             }))
           );
-          const res = await fetch('/api/repo/upload', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ files: payload })
-          });
-          if (res.ok) {
-            const json = await res.json();
-            if (Array.isArray(json.files)) {
-              storedFiles = json.files;
-              setLocalRepoFiles(prev => [...storedFiles, ...prev]);
+
+          // 1. Try Express local REPO PLATAFORMA endpoint (available in AI Studio / Node server)
+          let localRepoOk = false;
+          try {
+            const res = await fetch('/api/repo/upload', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                files: encodedList.map(item => ({ name: item.name, dataBase64: item.dataBase64 }))
+              })
+            });
+            if (res.ok) {
+              const json = await res.json();
+              if (Array.isArray(json.files)) {
+                storedFiles = json.files;
+                localRepoOk = true;
+              }
             }
-          } else {
-            const errJson = await res.json().catch(() => null);
-            setRepoWarning(errJson?.error || 'Los indicadores se integraron, pero no se pudo archivar el archivo en REPO PLATAFORMA.');
+          } catch {
+            localRepoOk = false;
+          }
+
+          // 2. Prepare GitHub REPO PLATAFORMA payloads (works from published Vercel as well as AI Studio)
+          let accumulatedB64Bytes = 0;
+          encodedList.forEach((item, idx) => {
+            const matchedStored = storedFiles[idx];
+            const storedName = matchedStored?.storedName || buildClientStoredName(item.name);
+            if (!localRepoOk) {
+              storedFiles.push({
+                originalName: item.name,
+                storedName,
+                size: item.size,
+                uploadedAt: new Date().toISOString(),
+                url: `/api/github-sync?download=${encodeURIComponent(storedName)}`
+              });
+            }
+            if (item.size <= MAX_GITHUB_ATTACH_BYTES && accumulatedB64Bytes + item.dataBase64.length <= 3_600_000) {
+              accumulatedB64Bytes += item.dataBase64.length;
+              rawFilePayloads.push({
+                originalName: item.name,
+                storedName,
+                size: item.size,
+                dataBase64: item.dataBase64
+              });
+            }
+          });
+
+          if (storedFiles.length > 0) {
+            setLocalRepoFiles(prev => [...storedFiles, ...prev]);
+          }
+          if (rawFilePayloads.length < encodedList.length) {
+            setRepoWarning(
+              'Los indicadores se integraron en línea; alguno de los archivos supera 2.8 MB y no se adjunta binario al commit automático de GitHub.'
+            );
           }
         }
       } catch {
-        setRepoWarning('Los indicadores se integraron en el navegador; el guardado local en REPO PLATAFORMA no respondió.');
+        setRepoWarning('Los indicadores se integraron en línea; no se pudo preparar la copia binaria del archivo.');
       }
     }
 
-    onApplyBatch(pendingBatch, pendingFileNames, storedFiles);
+    onApplyBatch(pendingBatch, pendingFileNames, storedFiles, rawFilePayloads);
     setPendingBatch(null);
     setPendingFileNames([]);
     setPendingRawFiles([]);
@@ -373,8 +464,8 @@ export const ExcelUploaderBlock: React.FC<ExcelUploaderBlockProps> = ({
 
     const archivedNotice =
       storedFiles.length > 0
-        ? ` Respaldado en REPO PLATAFORMA (${storedFiles.length} archivo${storedFiles.length === 1 ? '' : 's'}).`
-        : '';
+        ? ` Sincronizado en la nube y vinculado en REPO PLATAFORMA (${storedFiles.length} archivo${storedFiles.length === 1 ? '' : 's'}).`
+        : ' Sincronizado en la nube para todos los usuarios.';
 
     setAppliedBanner(
       `Datos integrados correctamente en: ${summaryItems.map(i => i.label).join(', ')}.${archivedNotice}`

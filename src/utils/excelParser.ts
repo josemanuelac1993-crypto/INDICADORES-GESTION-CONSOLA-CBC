@@ -546,7 +546,7 @@ function parseOfficialNov(
       ? Object.values(existing.ag).reduce((s, arr) => s + arr[0], 0)
       : -1;
     if (tot >= existingTot && tot >= 0) {
-      batch.novShifts[id] = { d: k.d, t: k.t, ag };
+      batch.novShifts[id] = { d: k.d, t: k.t, at: new Date().toISOString(), ag };
     }
   }
 

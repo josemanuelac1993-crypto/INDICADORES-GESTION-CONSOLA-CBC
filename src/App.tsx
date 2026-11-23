@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   AgencyData,
   AuditReport,
@@ -8,6 +8,7 @@ import {
   IncidentRecord,
   MonthlyTrendsData,
   PendingUploadBatch,
+  PendingUploadFilePayload,
   RegionName,
   StoredRepoFile,
   UploadHistoryRecord,
@@ -32,6 +33,7 @@ import { fetchLiveWeatherData, formatNumber, formatPercentage } from './utils/da
 import { exportToExcel, exportToJson } from './utils/exportUtils';
 import { generateIncidentHash } from './utils/excelParser';
 import { testFirestoreConnection } from './firebase/config';
+import firebaseConfig from '../firebase-applet-config.json';
 import {
   saveIncidentToFirestore,
   deleteIncidentFromFirestore,
@@ -40,7 +42,11 @@ import {
   subscribeToIncidents,
   subscribeToFeed,
   saveUploadHistoryToFirestore,
-  subscribeToUploadHistory
+  subscribeToUploadHistory,
+  fetchFeedFromServer,
+  fetchIncidentsFromServer,
+  fetchUploadHistoryFromServer,
+  resetFirestoreWorkspace
 } from './firebase/firestoreService';
 import { Header } from './components/Header';
 import { KPICards, KPIData } from './components/KPICards';
@@ -67,6 +73,8 @@ import {
   CheckCircle2,
   ExternalLink,
   RefreshCw,
+  UploadCloud,
+  AlertTriangle,
   X
 } from 'lucide-react';
 
@@ -76,16 +84,34 @@ const STORAGE_UPLOADS_KEY = 'cco_tesalia_uploads_v3';
 
 const MON_ORDER = ['ENE', 'FEB', 'MAR', 'ABR', 'MAY', 'JUN', 'JUL', 'AGO', 'SEP', 'OCT', 'NOV', 'DIC'];
 
-function mergeFeedByTimestamp(prev: FeedState, incoming: FeedState): FeedState {
-  const merged: FeedState = { ...prev };
+function mergeFeedByTimestamp(
+  prev: FeedState,
+  incoming: FeedState,
+  incomingFallbackAt?: string
+): FeedState {
   const isNewer = (nextAt?: string, prevAt?: string) =>
     Boolean(nextAt && (!prevAt || nextAt > prevAt));
+
+  // If the incoming feed comes from a newer explicit workspace reset, adopt it cleanly
+  if (incoming.resetAt && isNewer(incoming.resetAt, prev.resetAt)) {
+    return JSON.parse(JSON.stringify(incoming));
+  }
+
+  const merged: FeedState = { ...prev };
+  if (prev.resetAt || incoming.resetAt) {
+    merged.resetAt = isNewer(incoming.resetAt, prev.resetAt) ? incoming.resetAt : prev.resetAt;
+  }
 
   if (incoming.nov) {
     const nextNov = { ...(prev.nov || {}) };
     Object.entries(incoming.nov).forEach(([k, val]) => {
-      if (isNewer(val?.at, nextNov[k]?.at)) {
-        nextNov[k] = val;
+      if (!val) return;
+      const effectiveAt = val.at || incomingFallbackAt;
+      if (!nextNov[k] || isNewer(effectiveAt, nextNov[k]?.at)) {
+        nextNov[k] = {
+          ...val,
+          at: val.at || effectiveAt || new Date().toISOString()
+        };
       }
     });
     merged.nov = nextNov;
@@ -94,22 +120,52 @@ function mergeFeedByTimestamp(prev: FeedState, incoming: FeedState): FeedState {
   if (incoming.rev) {
     const nextRev = { ...(prev.rev || {}) };
     Object.entries(incoming.rev).forEach(([id, val]) => {
-      if (isNewer(val?.at, nextRev[id]?.at)) {
+      if (!val) return;
+      const effectiveAt = val.at || incomingFallbackAt;
+      if (!nextRev[id] || isNewer(effectiveAt, nextRev[id]?.at)) {
         nextRev[id] = val;
       }
     });
     merged.rev = nextRev;
   }
 
-  if (incoming.bl && isNewer(incoming.bl.at, prev.bl?.at)) merged.bl = incoming.bl;
-  if (incoming.sp && isNewer(incoming.sp.at, prev.sp?.at)) merged.sp = incoming.sp;
-  if (incoming.dc && isNewer(incoming.dc.at, prev.dc?.at)) merged.dc = incoming.dc;
-  if (incoming.bq && isNewer(incoming.bq.at, prev.bq?.at)) merged.bq = incoming.bq;
-  if (incoming.cam && isNewer(incoming.cam.at, prev.cam?.at)) merged.cam = incoming.cam;
-  if (incoming.camm && isNewer(incoming.camm.at, prev.camm?.at)) merged.camm = incoming.camm;
-  if (incoming.vl && isNewer(incoming.vl.at, prev.vl?.at)) merged.vl = incoming.vl;
+  if (incoming.bl && isNewer(incoming.bl.at || incomingFallbackAt, prev.bl?.at)) merged.bl = incoming.bl;
+  if (incoming.sp && isNewer(incoming.sp.at || incomingFallbackAt, prev.sp?.at)) merged.sp = incoming.sp;
+  if (incoming.dc && isNewer(incoming.dc.at || incomingFallbackAt, prev.dc?.at)) merged.dc = incoming.dc;
+  if (incoming.bq && isNewer(incoming.bq.at || incomingFallbackAt, prev.bq?.at)) merged.bq = incoming.bq;
+  if (incoming.cam && isNewer(incoming.cam.at || incomingFallbackAt, prev.cam?.at)) merged.cam = incoming.cam;
+  if (incoming.camm && isNewer(incoming.camm.at || incomingFallbackAt, prev.camm?.at)) merged.camm = incoming.camm;
+  if (incoming.vl && isNewer(incoming.vl.at || incomingFallbackAt, prev.vl?.at)) merged.vl = incoming.vl;
+
+  const deletedSet = new Set<string>([
+    ...(prev.deletedIncidentIds || []),
+    ...(incoming.deletedIncidentIds || [])
+  ]);
+  if (deletedSet.size > 0) {
+    merged.deletedIncidentIds = Array.from(deletedSet).slice(-500);
+  }
 
   return merged;
+}
+
+function mergeUploadHistoryLists(
+  prev: UploadHistoryRecord[],
+  incoming: UploadHistoryRecord[],
+  authoritative = false
+): UploadHistoryRecord[] {
+  const map = new Map<string, UploadHistoryRecord>();
+  if (!authoritative) {
+    prev.forEach(item => map.set(item.id, item));
+  }
+  incoming.forEach(item => {
+    const existing = map.get(item.id);
+    if (!existing || (item.storedFiles?.length || 0) > (existing.storedFiles?.length || 0)) {
+      map.set(item.id, item);
+    }
+  });
+  return Array.from(map.values())
+    .sort((a, b) => (b.isoDate || b.id).localeCompare(a.isoDate || a.id))
+    .slice(0, 40);
 }
 
 export default function App() {
@@ -139,6 +195,16 @@ export default function App() {
   const [isRefreshingWeather, setIsRefreshingWeather] = useState<boolean>(false);
   const [gmpQuotaExceeded, setGmpQuotaExceeded] = useState<boolean>(false);
   const [isSyncingVercel, setIsSyncingVercel] = useState<boolean>(false);
+  const [cloudSyncStatus, setCloudSyncStatus] = useState<'syncing' | 'synced' | 'error'>('syncing');
+  const [cloudSyncMessage, setCloudSyncMessage] = useState<string>('Conectando con Firestore y GitHub...');
+  const [firestoreQuotaExceeded, setFirestoreQuotaExceeded] = useState<boolean>(false);
+  const [isPushingGitHub, setIsPushingGitHub] = useState<boolean>(false);
+  const [githubSyncNote, setGithubSyncNote] = useState<{
+    configured: boolean;
+    committed?: boolean;
+    sha?: string | null;
+    message?: string;
+  } | null>(null);
   const [vercelSyncInfo, setVercelSyncInfo] = useState<{
     ok: boolean;
     message: string;
@@ -181,8 +247,237 @@ export default function App() {
     }
   });
 
-  // Locally archived files inside REPO PLATAFORMA/
+  // Locally / GitHub archived files inside REPO PLATAFORMA/
   const [repoFiles, setRepoFiles] = useState<StoredRepoFile[]>([]);
+
+  // Refs for authoritative async reconciliation without stale closures
+  const feedRef = useRef<FeedState>(feedState);
+  const incidentsRef = useRef<IncidentRecord[]>(customIncidents);
+  const historyRef = useRef<UploadHistoryRecord[]>(uploadHistory);
+  const recentLocalIncidentIdsRef = useRef<Map<string, number>>(new Map());
+
+  useEffect(() => {
+    feedRef.current = feedState;
+  }, [feedState]);
+
+  useEffect(() => {
+    incidentsRef.current = customIncidents;
+  }, [customIncidents]);
+
+  useEffect(() => {
+    historyRef.current = uploadHistory;
+  }, [uploadHistory]);
+
+  const reconcileIncidents = (
+    prev: IncidentRecord[],
+    incoming: IncidentRecord[],
+    deletedIdsList: string[] | undefined,
+    authoritative: boolean
+  ): IncidentRecord[] => {
+    const deletedSet = new Set(deletedIdsList || []);
+    const now = Date.now();
+    // Clean expired optimistic tracking (> 15s)
+    recentLocalIncidentIdsRef.current.forEach((ts, id) => {
+      if (now - ts > 15000) recentLocalIncidentIdsRef.current.delete(id);
+    });
+
+    const byId = new Map<string, IncidentRecord>();
+    const seenHashes = new Set<string>();
+
+    // Keep server/incoming records first (authoritative order)
+    for (const inc of incoming) {
+      if (!inc?.id || deletedSet.has(inc.id)) continue;
+      const h = generateIncidentHash(inc.a, inc.d, inc.t, inc.x || '');
+      if (byId.has(inc.id) || seenHashes.has(h)) continue;
+      byId.set(inc.id, inc);
+      seenHashes.add(h);
+    }
+
+    // If not authoritative (local cache only) OR recent optimistic writes not yet echoed back, preserve them
+    for (const inc of prev) {
+      if (!inc?.id || deletedSet.has(inc.id)) continue;
+      if (authoritative && !recentLocalIncidentIdsRef.current.has(inc.id)) continue;
+      const h = generateIncidentHash(inc.a, inc.d, inc.t, inc.x || '');
+      if (byId.has(inc.id) || seenHashes.has(h)) continue;
+      byId.set(inc.id, inc);
+      seenHashes.add(h);
+    }
+
+    const result = Array.from(byId.values()).sort((a, b) => (b.d || '').localeCompare(a.d || ''));
+    try {
+      localStorage.setItem(STORAGE_INCIDENTS_KEY, JSON.stringify(result));
+    } catch {}
+    return result;
+  };
+
+  // Persist current consolidated state + optional files to GitHub repository via server-side /api/github-sync
+  const syncToGitHubCloud = async (
+    nextFeed: FeedState,
+    nextIncidents: IncidentRecord[],
+    nextHistory: UploadHistoryRecord[],
+    summary: string,
+    filesPayload?: PendingUploadFilePayload[]
+  ) => {
+    try {
+      const res = await fetch('/api/github-sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        cache: 'no-store',
+        body: JSON.stringify({
+          updatedAt: new Date().toISOString(),
+          summary,
+          feedState: nextFeed,
+          customIncidents: nextIncidents,
+          uploadHistory: nextHistory,
+          files: filesPayload && filesPayload.length > 0 ? filesPayload : undefined
+        })
+      });
+      const json = await res.json().catch(() => null);
+      if (res.ok && json?.ok) {
+        if (json.committed) {
+          setGithubSyncNote({
+            configured: true,
+            committed: true,
+            sha: json.sha || null,
+            message: `Respaldado en GitHub (${json.sha || 'main'}).`
+          });
+          if (Array.isArray(json.committedFiles) && json.committedFiles.length > 0) {
+            setRepoFiles(prev => {
+              const map = new Map<string, StoredRepoFile>();
+              json.committedFiles.forEach((f: StoredRepoFile) => map.set(f.storedName, f));
+              prev.forEach(f => {
+                if (!map.has(f.storedName)) map.set(f.storedName, f);
+              });
+              return Array.from(map.values());
+            });
+          }
+        } else {
+          setGithubSyncNote({
+            configured: Boolean(json.githubConfigured),
+            committed: false,
+            message: json.message
+          });
+        }
+      } else {
+        setGithubSyncNote({
+          configured: Boolean(json?.githubConfigured ?? true),
+          committed: false,
+          message: json?.error || 'No se pudo respaldar este cambio en GitHub.'
+        });
+      }
+    } catch {
+      // Keep Firestore live sync intact even if GitHub sync endpoint is unreachable
+    }
+  };
+
+  // Pull authoritative state from Firestore server + GitHub live-state.json so all devices see identical data
+  const pullFromCloudServers = async (): Promise<{ ok: boolean; detail?: string }> => {
+    let serverFeedMerged = feedRef.current;
+    let anyRemoteSuccess = false;
+
+    try {
+      const [{ feed: fsFeed, updatedAt }, fsIncidents, fsHistory] = await Promise.all([
+        fetchFeedFromServer(),
+        fetchIncidentsFromServer(),
+        fetchUploadHistoryFromServer()
+      ]);
+      anyRemoteSuccess = true;
+
+      if (fsFeed) {
+        serverFeedMerged = mergeFeedByTimestamp(serverFeedMerged, fsFeed, updatedAt);
+        setFeedState(serverFeedMerged);
+        try {
+          localStorage.setItem(STORAGE_FEED_KEY, JSON.stringify(serverFeedMerged));
+        } catch {}
+      }
+
+      setCustomIncidents(prev =>
+        reconcileIncidents(prev, fsIncidents, serverFeedMerged.deletedIncidentIds, true)
+      );
+
+      setUploadHistory(prev => {
+        const mergedHist = mergeUploadHistoryLists(prev, fsHistory, fsHistory.length > 0 || Boolean(fsFeed?.resetAt));
+        try {
+          localStorage.setItem(STORAGE_UPLOADS_KEY, JSON.stringify(mergedHist));
+        } catch {}
+        return mergedHist;
+      });
+
+      setCloudSyncStatus('synced');
+      setCloudSyncMessage('Sincronizado en línea (Firestore + GitHub)');
+    } catch (err: any) {
+      setCloudSyncStatus('error');
+      setCloudSyncMessage('Sin conexión directa con Firestore; verificando respaldo en GitHub...');
+    }
+
+    // Also pull live snapshot & REPO PLATAFORMA files from /api/github-sync (or static /data/live-state.json)
+    try {
+      let ghJson: any = null;
+      const ghRes = await fetch('/api/github-sync', { cache: 'no-store' }).catch(() => null);
+      if (ghRes && ghRes.ok) {
+        ghJson = await ghRes.json().catch(() => null);
+      } else {
+        const staticRes = await fetch(`/data/live-state.json?_ts=${Date.now()}`, { cache: 'no-store' }).catch(() => null);
+        if (staticRes && staticRes.ok) {
+          const snap = await staticRes.json().catch(() => null);
+          if (snap) ghJson = { ok: true, githubConfigured: false, snapshot: snap, repoFiles: [] };
+        }
+      }
+
+      if (ghJson?.ok) {
+        if (typeof ghJson.githubConfigured === 'boolean') {
+          setGithubSyncNote(prev => ({
+            configured: ghJson.githubConfigured,
+            committed: prev?.committed,
+            sha: prev?.sha,
+            message: ghJson.githubConfigured
+              ? prev?.message || 'GitHub configurado para guardado automático desde la versión publicada.'
+              : 'Para guardar commits directos en GitHub desde Vercel, agrega GITHUB_TOKEN en Variables de Entorno de Vercel.'
+          }));
+        }
+
+        const snap = ghJson.snapshot;
+        if (snap && snap.feedState) {
+          anyRemoteSuccess = true;
+          const mergedFromGh = mergeFeedByTimestamp(serverFeedMerged, snap.feedState, snap.updatedAt);
+          setFeedState(mergedFromGh);
+          try {
+            localStorage.setItem(STORAGE_FEED_KEY, JSON.stringify(mergedFromGh));
+          } catch {}
+
+          if (Array.isArray(snap.customIncidents) && snap.customIncidents.length > 0) {
+            setCustomIncidents(prev =>
+              reconcileIncidents(prev, snap.customIncidents, mergedFromGh.deletedIncidentIds, false)
+            );
+          }
+          if (Array.isArray(snap.uploadHistory) && snap.uploadHistory.length > 0) {
+            setUploadHistory(prev => {
+              const mergedHist = mergeUploadHistoryLists(prev, snap.uploadHistory, false);
+              try {
+                localStorage.setItem(STORAGE_UPLOADS_KEY, JSON.stringify(mergedHist));
+              } catch {}
+              return mergedHist;
+            });
+          }
+        }
+
+        if (Array.isArray(ghJson.repoFiles) && ghJson.repoFiles.length > 0) {
+          setRepoFiles(prev => {
+            const map = new Map<string, StoredRepoFile>();
+            prev.forEach(f => map.set(f.storedName, f));
+            ghJson.repoFiles.forEach((f: StoredRepoFile) => {
+              if (!map.has(f.storedName)) map.set(f.storedName, f);
+            });
+            return Array.from(map.values());
+          });
+        }
+      }
+    } catch {
+      // Ignore fallback snapshot fetch failures
+    }
+
+    return { ok: anyRemoteSuccess };
+  };
 
   // Load weather on mount
   const loadWeather = async () => {
@@ -193,26 +488,52 @@ export default function App() {
     setIsRefreshingWeather(false);
   };
 
-  // Check GitHub -> Vercel deployment status, trigger Deploy Hook if configured, and reload local repo/data
+  // Explicit push of current console state to Firestore + GitHub
+  const handleForcePushToGitHub = async () => {
+    if (isPushingGitHub) return;
+    setIsPushingGitHub(true);
+    try {
+      await saveFeedToFirestore(feedRef.current);
+      if (incidentsRef.current.length > 0) {
+        await saveBatchIncidentsToFirestore(incidentsRef.current);
+      }
+      await syncToGitHubCloud(
+        feedRef.current,
+        incidentsRef.current,
+        historyRef.current,
+        'Sincronización manual completa desde Consola CCO'
+      );
+      setCloudSyncStatus('synced');
+    } catch {
+      setCloudSyncStatus('error');
+    } finally {
+      setIsPushingGitHub(false);
+    }
+  };
+
+  // Sync live data from Firestore/GitHub AND check GitHub -> Vercel deployment status
   const handleSyncVercel = async () => {
     if (isSyncingVercel) return;
     setIsSyncingVercel(true);
+    setCloudSyncStatus('syncing');
     try {
       const currentScript = document
         .querySelector('script[src*="/assets/index-"]')
         ?.getAttribute('src');
 
-      let syncPayload: any = null;
-      const res = await fetch('/api/vercel-sync', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        cache: 'no-store'
-      }).catch(() => null);
+      const [cloudPull, res] = await Promise.all([
+        pullFromCloudServers(),
+        fetch('/api/vercel-sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          cache: 'no-store'
+        }).catch(() => null)
+      ]);
 
+      let syncPayload: any = null;
       if (res && res.ok) {
         syncPayload = await res.json();
       } else {
-        // Fallback when running without backend route: query public GitHub commits & status directly
         const repo = 'josemanuelac1993-crypto/INDICADORES-GESTION-CONSOLA-CBC';
         const cRes = await fetch(`https://api.github.com/repos/${repo}/commits/main`, {
           cache: 'no-store'
@@ -248,7 +569,6 @@ export default function App() {
         }
       }
 
-      // Refresh REPO PLATAFORMA file listing & weather simultaneously
       fetch('/api/repo/files', { cache: 'no-store' })
         .then(r => (r.ok ? r.json() : null))
         .then(d => {
@@ -273,13 +593,13 @@ export default function App() {
 
         let message = '';
         if (syncPayload.deployTriggered) {
-          message = `Despliegue en Vercel iniciado desde GitHub (${ghSha || 'main'}). Tarda ~1-2 min en reflejarse.`;
+          message = `Datos en vivo sincronizados y despliegue en Vercel iniciado desde GitHub (${ghSha || 'main'}).`;
         } else if (hasNewerBundle) {
           message = `Hay una nueva versión publicada en Vercel (${ghSha || 'main'}). Recarga para aplicarla.`;
         } else if (vState === 'success') {
-          message = `Vercel y GitHub sincronizados en ${ghSha || 'main'} (${vDesc}).`;
+          message = `Datos en línea actualizados · Vercel y GitHub sincronizados en ${ghSha || 'main'} (${vDesc}).`;
         } else {
-          message = `Último commit en GitHub (${ghSha || 'main'}) aún sin despliegue completado en Vercel.`;
+          message = `Datos en línea actualizados · Último commit en GitHub (${ghSha || 'main'}).`;
         }
 
         setVercelSyncInfo({
@@ -295,14 +615,16 @@ export default function App() {
         });
       } else {
         setVercelSyncInfo({
-          ok: false,
-          message: 'No se pudo verificar el estado del repositorio de Vercel en este momento.'
+          ok: cloudPull.ok,
+          message: cloudPull.ok
+            ? 'Datos en vivo actualizados desde Firestore.'
+            : 'No se pudo verificar el estado de GitHub/Vercel en este momento.'
         });
       }
     } catch {
       setVercelSyncInfo({
         ok: false,
-        message: 'Error de conexión al consultar Vercel y GitHub.'
+        message: 'Error de conexión al sincronizar la consola.'
       });
     } finally {
       setIsSyncingVercel(false);
@@ -313,60 +635,79 @@ export default function App() {
     loadWeather();
     const interval = setInterval(loadWeather, 900000);
 
-    // Test Firestore connection on boot per Firebase skill guidelines
-    testFirestoreConnection();
+    // 1. Test Firestore server connectivity & pull authoritative cloud state immediately
+    testFirestoreConnection().then(res => {
+      if (!res.ok) {
+        setCloudSyncStatus('error');
+        setCloudSyncMessage('Firestore sin conexión directa; intentando cargar respaldo...');
+      }
+    });
+    pullFromCloudServers();
 
-    // Real-time synchronization of incidents from Firestore
-    const unsubIncidents = subscribeToIncidents(firestoreIncidents => {
-      if (firestoreIncidents.length > 0) {
-        setCustomIncidents(prev => {
-          const existingHashes = new Set(
-            prev.map(i => generateIncidentHash(i.a, i.d, i.t, i.x || ''))
-          );
-          const incoming = firestoreIncidents.filter(
-            i => !existingHashes.has(generateIncidentHash(i.a, i.d, i.t, i.x || ''))
-          );
-          if (incoming.length === 0) return prev;
-          const merged = [...incoming, ...prev];
+    // 2. Real-time synchronization of incidents from Firestore (including deletions & resets)
+    const unsubIncidents = subscribeToIncidents(
+      (firestoreIncidents, meta) => {
+        setCloudSyncStatus('synced');
+        setCloudSyncMessage('Sincronizado en vivo con todos los usuarios (Firestore)');
+        setCustomIncidents(prev =>
+          reconcileIncidents(
+            prev,
+            firestoreIncidents,
+            feedRef.current.deletedIncidentIds,
+            !meta.fromCache
+          )
+        );
+      },
+      () => {
+        setCloudSyncStatus('error');
+        setCloudSyncMessage('Error de lectura en tiempo real de novedades (Firestore).');
+      }
+    );
+
+    // 3. Real-time synchronization of feed from Firestore
+    const unsubFeed = subscribeToFeed(
+      (firestoreFeed, meta) => {
+        setCloudSyncStatus('synced');
+        setCloudSyncMessage('Sincronizado en vivo con todos los usuarios (Firestore)');
+        setFeedState(prev => {
+          const merged = mergeFeedByTimestamp(prev, firestoreFeed, meta.updatedAt);
           try {
-            localStorage.setItem(STORAGE_INCIDENTS_KEY, JSON.stringify(merged));
+            localStorage.setItem(STORAGE_FEED_KEY, JSON.stringify(merged));
+          } catch {}
+          if (merged.deletedIncidentIds?.length) {
+            setCustomIncidents(cur =>
+              reconcileIncidents(cur, cur, merged.deletedIncidentIds, false)
+            );
+          }
+          return merged;
+        });
+      },
+      () => {
+        setCloudSyncStatus('error');
+        setCloudSyncMessage('Error de lectura en tiempo real de indicadores (Firestore).');
+      }
+    );
+
+    // 4. Real-time synchronization of upload history from Firestore
+    const unsubHistory = subscribeToUploadHistory(
+      (firestoreHistory, meta) => {
+        setUploadHistory(prev => {
+          const merged = mergeUploadHistoryLists(
+            prev,
+            firestoreHistory,
+            !meta.fromCache && firestoreHistory.length === 0 && Boolean(feedRef.current.resetAt)
+          );
+          try {
+            localStorage.setItem(STORAGE_UPLOADS_KEY, JSON.stringify(merged));
           } catch {}
           return merged;
         });
-      }
-    });
+      },
+      () => {}
+    );
 
-    // Real-time synchronization of feed from Firestore (timestamp-aware so older snapshots do not overwrite newer baseline)
-    const unsubFeed = subscribeToFeed(firestoreFeed => {
-      setFeedState(prev => {
-        const merged = mergeFeedByTimestamp(prev, firestoreFeed);
-        try {
-          localStorage.setItem(STORAGE_FEED_KEY, JSON.stringify(merged));
-        } catch {}
-        return merged;
-      });
-    });
-
-    // Real-time synchronization of upload history from Firestore
-    const unsubHistory = subscribeToUploadHistory(firestoreHistory => {
-      setUploadHistory(prev => {
-        const map = new Map<string, UploadHistoryRecord>();
-        prev.forEach(item => map.set(item.id, item));
-        firestoreHistory.forEach(item => {
-          if (!map.has(item.id)) map.set(item.id, item);
-        });
-        const merged = Array.from(map.values())
-          .sort((a, b) => (b.isoDate || b.id).localeCompare(a.isoDate || a.id))
-          .slice(0, 40);
-        try {
-          localStorage.setItem(STORAGE_UPLOADS_KEY, JSON.stringify(merged));
-        } catch {}
-        return merged;
-      });
-    });
-
-    // Load archived files from REPO PLATAFORMA
-    fetch('/api/repo/files')
+    // 5. Load archived files from REPO PLATAFORMA (local + GitHub)
+    fetch('/api/repo/files', { cache: 'no-store' })
       .then(res => (res.ok ? res.json() : null))
       .then(data => {
         if (data && Array.isArray(data.files)) {
@@ -376,7 +717,13 @@ export default function App() {
       .catch(() => {});
 
     const handleQuotaExceeded = () => setGmpQuotaExceeded(true);
+    const handleFsQuotaExceeded = () => {
+      setFirestoreQuotaExceeded(true);
+      setCloudSyncStatus('error');
+      setCloudSyncMessage('Cuota gratuita diaria de Firestore alcanzada.');
+    };
     window.addEventListener('gmp-quota-exceeded', handleQuotaExceeded);
+    window.addEventListener('firestore-quota-exceeded', handleFsQuotaExceeded);
 
     return () => {
       clearInterval(interval);
@@ -384,6 +731,7 @@ export default function App() {
       unsubFeed();
       unsubHistory();
       window.removeEventListener('gmp-quota-exceeded', handleQuotaExceeded);
+      window.removeEventListener('firestore-quota-exceeded', handleFsQuotaExceeded);
     };
   }, []);
 
@@ -554,35 +902,78 @@ export default function App() {
     return allAgencies.find(a => a.a === selectedAgencyName) || null;
   }, [selectedAgencyName, allAgencies]);
 
-  // Save new manual incident
-  const handleSaveIncident = (incident: IncidentRecord) => {
-    const updated = [incident, ...customIncidents];
+  // Save new manual incident (syncs across Firestore + GitHub)
+  const handleSaveIncident = async (incident: IncidentRecord) => {
+    recentLocalIncidentIdsRef.current.set(incident.id, Date.now());
+    const updated = [incident, ...incidentsRef.current];
     setCustomIncidents(updated);
-    saveIncidentToFirestore(incident);
     try {
       localStorage.setItem(STORAGE_INCIDENTS_KEY, JSON.stringify(updated));
     } catch (e) {
       console.warn('LocalStorage error:', e);
     }
+
+    setCloudSyncStatus('syncing');
+    try {
+      await saveIncidentToFirestore(incident);
+      setCloudSyncStatus('synced');
+      setCloudSyncMessage('Novedad guardada y visible en línea para todos los usuarios.');
+    } catch {
+      setCloudSyncStatus('error');
+      setCloudSyncMessage('Error al guardar la novedad en Firestore.');
+    }
+
+    syncToGitHubCloud(
+      feedRef.current,
+      updated,
+      historyRef.current,
+      `Novedad registrada: ${incident.a} (${incident.d})`
+    );
   };
 
-  // Delete incident from bitacora
-  const handleDeleteCustomIncident = (id: string) => {
-    const updated = customIncidents.filter(inc => inc.id !== id);
+  // Delete incident from bitacora (propagates deletion tombstone across Firestore + GitHub)
+  const handleDeleteCustomIncident = async (id: string) => {
+    recentLocalIncidentIdsRef.current.delete(id);
+    const updated = incidentsRef.current.filter(inc => inc.id !== id);
+    const deletedSet = new Set([...(feedRef.current.deletedIncidentIds || []), id]);
+    const nextFeed: FeedState = {
+      ...feedRef.current,
+      deletedIncidentIds: Array.from(deletedSet).slice(-500)
+    };
+
     setCustomIncidents(updated);
-    deleteIncidentFromFirestore(id);
+    setFeedState(nextFeed);
     try {
       localStorage.setItem(STORAGE_INCIDENTS_KEY, JSON.stringify(updated));
+      localStorage.setItem(STORAGE_FEED_KEY, JSON.stringify(nextFeed));
     } catch (e) {
       console.warn('LocalStorage error:', e);
     }
+
+    setCloudSyncStatus('syncing');
+    try {
+      await Promise.all([deleteIncidentFromFirestore(id), saveFeedToFirestore(nextFeed)]);
+      setCloudSyncStatus('synced');
+      setCloudSyncMessage('Eliminación sincronizada en línea para todos los usuarios.');
+    } catch {
+      setCloudSyncStatus('error');
+      setCloudSyncMessage('Error al sincronizar eliminación en Firestore.');
+    }
+
+    syncToGitHubCloud(
+      nextFeed,
+      updated,
+      historyRef.current,
+      `Registro eliminado de bitácora (${id})`
+    );
   };
 
   // Apply uploaded Excel / Word batch into feedState and customIncidents
-  const handleApplyUploadBatch = (
+  const handleApplyUploadBatch = async (
     batch: PendingUploadBatch,
     fileNames: string[],
-    storedFiles: StoredRepoFile[] = []
+    storedFiles: StoredRepoFile[] = [],
+    rawFilePayloads: PendingUploadFilePayload[] = []
   ) => {
     const now = new Date();
     const nowIso = now.toISOString();
@@ -593,10 +984,17 @@ export default function App() {
     ).padStart(2, '0')}`;
     const indicatorsUpdated: string[] = [];
 
-    const nextFeed: FeedState = JSON.parse(JSON.stringify(feedState));
+    const nextFeed: FeedState = JSON.parse(JSON.stringify(feedRef.current));
 
     if (Object.keys(batch.novShifts).length > 0) {
-      nextFeed.nov = { ...(nextFeed.nov || {}), ...batch.novShifts };
+      const stampedNovShifts: FeedState['nov'] = {};
+      Object.entries(batch.novShifts).forEach(([k, shift]) => {
+        stampedNovShifts[k] = {
+          ...shift,
+          at: shift.at || nowIso
+        };
+      });
+      nextFeed.nov = { ...(nextFeed.nov || {}), ...stampedNovShifts };
       indicatorsUpdated.push(`novedades ${Object.keys(batch.novShifts).length} fechas/turnos`);
     }
 
@@ -696,13 +1094,13 @@ export default function App() {
       indicatorsUpdated.push(`revisiones de cámaras ${validRevs.length}`);
     }
 
-    let nextIncidents = customIncidents;
+    let nextIncidents = incidentsRef.current;
     let uniqueNewIncidents: IncidentRecord[] = [];
     if (batch.extractedIncidents.length > 0) {
       const existingHashes = new Set(
-        customIncidents.map(inc => generateIncidentHash(inc.a, inc.d, inc.t, inc.x || ''))
+        incidentsRef.current.map(inc => generateIncidentHash(inc.a, inc.d, inc.t, inc.x || ''))
       );
-      const existingIds = new Set(customIncidents.map(inc => inc.id));
+      const existingIds = new Set(incidentsRef.current.map(inc => inc.id));
       let crossDuplicatesCount = 0;
 
       for (const inc of batch.extractedIncidents) {
@@ -713,11 +1111,12 @@ export default function App() {
           existingHashes.add(h);
           existingIds.add(inc.id);
           uniqueNewIncidents.push(inc);
+          recentLocalIncidentIdsRef.current.set(inc.id, Date.now());
         }
       }
 
       if (uniqueNewIncidents.length > 0) {
-        nextIncidents = [...uniqueNewIncidents, ...customIncidents];
+        nextIncidents = [...uniqueNewIncidents, ...incidentsRef.current];
         setCustomIncidents(nextIncidents);
         const dupInfo = crossDuplicatesCount > 0 ? ` (${crossDuplicatesCount} duplicados omitidos)` : '';
         indicatorsUpdated.push(`novedades bitácora ${uniqueNewIncidents.length}${dupInfo}`);
@@ -737,19 +1136,12 @@ export default function App() {
       storedFiles
     };
 
-    const nextHistory = [newRecord, ...uploadHistory].slice(0, 40);
+    const nextHistory = [newRecord, ...historyRef.current].slice(0, 40);
     setFeedState(nextFeed);
     setUploadHistory(nextHistory);
     if (storedFiles.length > 0) {
       setRepoFiles(prev => [...storedFiles, ...prev]);
     }
-
-    // Persist to Firestore
-    saveFeedToFirestore(nextFeed);
-    if (uniqueNewIncidents.length > 0) {
-      saveBatchIncidentsToFirestore(uniqueNewIncidents);
-    }
-    saveUploadHistoryToFirestore(newRecord);
 
     try {
       localStorage.setItem(STORAGE_FEED_KEY, JSON.stringify(nextFeed));
@@ -758,22 +1150,69 @@ export default function App() {
     } catch (e) {
       console.warn('LocalStorage error:', e);
     }
+
+    // Persist to Firestore (shared live state across all devices) + GitHub snapshot/repo files
+    setCloudSyncStatus('syncing');
+    try {
+      await Promise.all([
+        saveFeedToFirestore(nextFeed),
+        uniqueNewIncidents.length > 0 ? saveBatchIncidentsToFirestore(uniqueNewIncidents) : Promise.resolve(),
+        saveUploadHistoryToFirestore(newRecord)
+      ]);
+      setCloudSyncStatus('synced');
+      setCloudSyncMessage('Carga integrada y sincronizada en línea para todos los usuarios.');
+    } catch {
+      setCloudSyncStatus('error');
+      setCloudSyncMessage('Error al sincronizar la carga con Firestore.');
+    }
+
+    syncToGitHubCloud(
+      nextFeed,
+      nextIncidents,
+      nextHistory,
+      `Carga CCO: ${newRecord.summary}`,
+      rawFilePayloads
+    );
   };
 
-  // Restore initial base snapshot
-  const handleResetBaseData = () => {
-    const freshFeed = JSON.parse(JSON.stringify(INITIAL_FEED));
-    const freshIncidents = JSON.parse(JSON.stringify(INITIAL_EXTRA_INCIDENTS));
+  // Restore initial base snapshot across all connected users & GitHub
+  const handleResetBaseData = async () => {
+    const nowIso = new Date().toISOString();
+    const freshFeed: FeedState = {
+      ...JSON.parse(JSON.stringify(INITIAL_FEED)),
+      resetAt: nowIso,
+      deletedIncidentIds: []
+    };
+    const freshIncidents: IncidentRecord[] = JSON.parse(JSON.stringify(INITIAL_EXTRA_INCIDENTS));
+    recentLocalIncidentIdsRef.current.clear();
+
     setFeedState(freshFeed);
     setCustomIncidents(freshIncidents);
     setUploadHistory([]);
     try {
-      localStorage.removeItem(STORAGE_FEED_KEY);
-      localStorage.removeItem(STORAGE_INCIDENTS_KEY);
+      localStorage.setItem(STORAGE_FEED_KEY, JSON.stringify(freshFeed));
+      localStorage.setItem(STORAGE_INCIDENTS_KEY, JSON.stringify(freshIncidents));
       localStorage.removeItem(STORAGE_UPLOADS_KEY);
     } catch (e) {
       console.warn('LocalStorage error:', e);
     }
+
+    setCloudSyncStatus('syncing');
+    try {
+      await resetFirestoreWorkspace(freshFeed);
+      setCloudSyncStatus('synced');
+      setCloudSyncMessage('Línea base restaurada y sincronizada en línea para todos los usuarios.');
+    } catch {
+      setCloudSyncStatus('error');
+      setCloudSyncMessage('Error al restaurar datos base en Firestore.');
+    }
+
+    syncToGitHubCloud(
+      freshFeed,
+      freshIncidents,
+      [],
+      'Restauración de línea base oficial CCO'
+    );
   };
 
   // KPI Calculations
@@ -911,6 +1350,24 @@ export default function App() {
           </span>
         </div>
       )}
+      {firestoreQuotaExceeded && (
+        <div className="bg-rose-50 border-b border-rose-200 text-rose-950 px-4 py-2.5 text-xs md:text-sm text-center sticky top-0 z-50 shadow-sm">
+          <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-2">
+            <AlertTriangle className="w-4 h-4 text-rose-700 shrink-0" />
+            <span>
+              Se alcanzó la cuota diaria gratuita de lecturas/escrituras de Firestore.{' '}
+              <a
+                href={`https://console.firebase.google.com/project/${firebaseConfig.projectId}/firestore/databases/${firebaseConfig.firestoreDatabaseId}/data?openUpgradeDialog=true`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline font-bold text-rose-900 hover:text-rose-700"
+              >
+                Abrir consola de Firebase para ampliar cuota
+              </a>
+            </span>
+          </div>
+        </div>
+      )}
       {/* Top Header */}
       <Header
         searchQuery={searchQuery}
@@ -928,6 +1385,8 @@ export default function App() {
         isRefreshingWeather={isRefreshingWeather}
         onSyncVercel={handleSyncVercel}
         isSyncingVercel={isSyncingVercel}
+        cloudSyncStatus={cloudSyncStatus}
+        cloudSyncTitle={cloudSyncMessage}
       />
 
       {/* Vercel & GitHub Sync Status Banner */}
@@ -942,21 +1401,38 @@ export default function App() {
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div className="flex items-start sm:items-center gap-2 min-w-0">
               <CheckCircle2 className="w-4 h-4 text-blue-700 shrink-0 mt-0.5 sm:mt-0" />
-              <div className="min-w-0">
-                <span className="font-bold">{vercelSyncInfo.message}</span>
-                {vercelSyncInfo.githubMessage && (
-                  <span className="text-slate-700 ml-2 hidden md:inline">
-                    · Commit: "{vercelSyncInfo.githubMessage}"
-                  </span>
-                )}
-                {vercelSyncInfo.vercelUpdatedAt && (
-                  <span className="text-slate-600 ml-2 font-mono-tabular">
-                    · Último build: {new Date(vercelSyncInfo.vercelUpdatedAt).toLocaleString('es-EC')}
-                  </span>
+              <div className="min-w-0 space-y-0.5">
+                <div>
+                  <span className="font-bold">{vercelSyncInfo.message}</span>
+                  {vercelSyncInfo.githubMessage && (
+                    <span className="text-slate-700 ml-2 hidden md:inline">
+                      · Commit: "{vercelSyncInfo.githubMessage}"
+                    </span>
+                  )}
+                  {vercelSyncInfo.vercelUpdatedAt && (
+                    <span className="text-slate-600 ml-2 font-mono-tabular">
+                      · Último build: {new Date(vercelSyncInfo.vercelUpdatedAt).toLocaleString('es-EC')}
+                    </span>
+                  )}
+                </div>
+                {githubSyncNote?.message && (
+                  <div className="text-[11px] text-slate-700">
+                    {githubSyncNote.message}
+                  </div>
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-2 shrink-0 flex-wrap">
+              <button
+                type="button"
+                onClick={handleForcePushToGitHub}
+                disabled={isPushingGitHub}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-emerald-700 hover:bg-emerald-800 disabled:opacity-60 text-white font-semibold transition-colors"
+                title="Guardar estado actual en Firestore y GitHub"
+              >
+                <UploadCloud className="w-3 h-3" />
+                <span>{isPushingGitHub ? 'Guardando...' : 'Guardar en GitHub'}</span>
+              </button>
               {vercelSyncInfo.targetUrl && (
                 <a
                   href={vercelSyncInfo.targetUrl}

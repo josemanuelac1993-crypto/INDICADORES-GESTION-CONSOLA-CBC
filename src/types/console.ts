@@ -140,6 +140,15 @@ export interface FeedState {
   };
   vl?: ValidationSummary;
   rev: Record<string, { a: string; d: string | null; at: string; g?: string }>;
+  resetAt?: string;
+  deletedIncidentIds?: string[];
+}
+
+export interface PendingUploadFilePayload {
+  originalName: string;
+  storedName: string;
+  size: number;
+  dataBase64: string;
 }
 
 export interface UploadLogItem {
@@ -155,6 +164,7 @@ export interface StoredRepoFile {
   size: number;
   uploadedAt: string;
   url: string;
+  githubUrl?: string;
 }
 
 export interface SheetParseReport {

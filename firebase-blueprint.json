@@ -13,7 +13,8 @@
         "x": { "type": "string", "description": "Descripción detallada de los hechos u observaciones" },
         "author": { "type": "string", "description": "Operador, coordinador o fuente del reporte" },
         "source": { "type": "string", "description": "Origen del dato: manual, excel o sheets" },
-        "createdAt": { "type": "string", "description": "Marca de tiempo ISO de creación o sincronización" }
+        "createdAt": { "type": "string", "description": "Marca de tiempo ISO de creación o sincronización" },
+        "updatedAt": { "type": "string", "description": "Marca de tiempo ISO de última actualización" }
       },
       "required": ["id", "a", "t", "e", "d"]
     },
